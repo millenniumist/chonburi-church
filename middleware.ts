@@ -3,11 +3,15 @@ import { NextResponse } from 'next/server';
 export async function middleware(request) {
     const { pathname } = request.nextUrl;
 
-    // Skip internal paths, static files, and admin routes
+    // Skip internal paths, static files, and admin routes (both existing /admin and the
+    // parallel Payload CMS admin mounted at /payload-admin / /payload-api).
     if (
         pathname.startsWith('/_next') ||
         pathname.startsWith('/api') ||
         pathname.startsWith('/admin') ||
+        pathname.startsWith('/payload-admin') ||
+        pathname.startsWith('/payload-api') ||
+        pathname.startsWith('/payload-graphql') ||
         pathname.includes('.') // file extensions
     ) {
         return NextResponse.next();
