@@ -15,6 +15,7 @@ async function main() {
   const { db } = await import('@/lib/db');
   const { hashPassword } = await import('@/lib/auth/password');
   const schema = await import('@/lib/db/schema');
+  const { church } = await import('@/content/site');
 
   // ── Site config (single row, id = 1). Default to a placeholder location;
   //    set the real church coordinates in the admin once it's built.
@@ -22,25 +23,39 @@ async function main() {
     .insert(schema.siteConfig)
     .values({
       id: 1,
-      churchLat: 13.7563, // Bangkok placeholder — change in admin
-      churchLng: 100.5018,
+      churchLat: church.coordinates.latitude,
+      churchLng: church.coordinates.longitude,
       checkinRadiusMeters: 150,
-      addressTh: 'กรุณาตั้งค่าที่อยู่ในหน้าผู้ดูแล',
-      addressEn: 'Set the church address in the admin',
+      addressTh: church.address.th,
+      addressEn: church.address.en,
+      mapEmbedUrl: church.mapEmbedUrl,
+      phone: church.phone,
     })
     .onConflictDoNothing();
 
   // ── Sunday service window ─────────────────────────────────────────────────
+  // The at-church Sunday windows that count for GPS check-in qualification.
+  // (Weekday events like home worship / visitation are off-site, so they're not seeded here.)
   const existingServices = await db.select().from(schema.services);
   if (existingServices.length === 0) {
-    await db.insert(schema.services).values({
-      nameTh: 'นมัสการวันอาทิตย์',
-      nameEn: 'Sunday Service',
-      dayOfWeek: 0,
-      startTime: '10:00',
-      endTime: '12:00',
-      active: true,
-    });
+    await db.insert(schema.services).values([
+      {
+        nameTh: 'ศึกษาพระคัมภีร์',
+        nameEn: 'Bible Study',
+        dayOfWeek: 0,
+        startTime: '09:30',
+        endTime: '10:00',
+        active: true,
+      },
+      {
+        nameTh: 'นมัสการและเทศนา',
+        nameEn: 'Worship Gathering & Sermon',
+        dayOfWeek: 0,
+        startTime: '10:00',
+        endTime: '12:00',
+        active: true,
+      },
+    ]);
   }
 
   // ── Saturday classes ──────────────────────────────────────────────────────
