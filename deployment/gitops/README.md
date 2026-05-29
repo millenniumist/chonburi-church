@@ -27,7 +27,7 @@ This folder contains a lightweight, push-driven GitOps setup for a Raspberry Pi 
 Run the bootstrap from a clone of the repo on the Pi:
 
 ```bash
-cd church-financial-report
+cd chonburi-church
 ./deployment/gitops/bootstrap.sh
 ```
 
