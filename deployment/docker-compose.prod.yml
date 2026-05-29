@@ -22,12 +22,20 @@ services:
       PAYLOAD_SECRET: ${PAYLOAD_SECRET_PROD:?PAYLOAD_SECRET_PROD is required}
       # Distinct generic env var for visibility if needed
       APP_ENV: production
+      # Right-size V8 heap below the container limit so GC runs before the cgroup
+      # OOM-kills the process; widen the libuv pool for sharp/Sheets/pg work.
+      NODE_OPTIONS: --max-old-space-size=1024
+      UV_THREADPOOL_SIZE: 8
     ports:
       - "8359:8358"
     volumes:
       - bulletins-data-prod:/app/bulletins
       - ../privatekey-gsheet.json:/app/privatekey-gsheet.json
     restart: unless-stopped
+    # Cap the blast radius on a swap-saturated Pi co-located with other containers.
+    mem_limit: 1536m
+    mem_reservation: 512m
+    cpus: 2.0
     extra_hosts:
       - "host.docker.internal:host-gateway"
     networks:
