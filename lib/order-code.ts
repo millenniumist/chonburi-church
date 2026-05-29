@@ -1,0 +1,14 @@
+import { randomBytes } from 'node:crypto';
+
+// No ambiguous characters (no I, O, 0, 1).
+const ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+
+/** A short, human-readable pickup code, e.g. "K7QF". */
+export function generatePickupCode(length = 4): string {
+  const bytes = randomBytes(length);
+  let code = '';
+  for (let i = 0; i < length; i++) {
+    code += ALPHABET[bytes[i]! % ALPHABET.length];
+  }
+  return code;
+}
