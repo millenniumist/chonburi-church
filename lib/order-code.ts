@@ -7,8 +7,8 @@ const ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
 export function generatePickupCode(length = 4): string {
   const bytes = randomBytes(length);
   let code = '';
-  for (let i = 0; i < length; i++) {
-    code += ALPHABET[bytes[i]! % ALPHABET.length];
+  for (const byte of bytes) {
+    code += ALPHABET[byte % ALPHABET.length];
   }
   return code;
 }

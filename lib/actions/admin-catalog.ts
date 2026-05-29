@@ -4,7 +4,7 @@ import { z } from 'zod';
 import { revalidatePath } from 'next/cache';
 import { eq } from 'drizzle-orm';
 import { db } from '@/lib/db';
-import { classOfferings, menuItems } from '@/lib/db/schema';
+import { classKind, classOfferings, menuItems } from '@/lib/db/schema';
 import { requireRole } from '@/lib/auth';
 import type { ActionResult } from '@/lib/forms';
 import type { ClassOffering, MenuItem } from '@/lib/db/schema';
@@ -195,7 +195,7 @@ export async function deleteMenuItem(input: DeleteMenuItemInput): Promise<Action
 const classOfferingSchema = z
   .object({
     slug: slugSchema,
-    kind: z.enum(['english', 'guitar', 'japanese']),
+    kind: z.enum(classKind.enumValues),
     nameTh: z.string().trim().min(1).max(120),
     nameEn: z.string().trim().min(1).max(120),
     descriptionTh: optionalText(2000),
@@ -249,7 +249,7 @@ const updateClassOfferingSchema = z
   .object({
     id: z.string().uuid(),
     slug: slugSchema,
-    kind: z.enum(['english', 'guitar', 'japanese']),
+    kind: z.enum(classKind.enumValues),
     nameTh: z.string().trim().min(1).max(120),
     nameEn: z.string().trim().min(1).max(120),
     descriptionTh: optionalText(2000),

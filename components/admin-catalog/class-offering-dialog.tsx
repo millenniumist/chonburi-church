@@ -38,11 +38,21 @@ type ClassOfferingDialogProps = {
   children: React.ReactNode;
 };
 
-const KIND_OPTIONS: { value: ClassKind; th: string; en: string }[] = [
-  { value: 'english', th: 'ภาษาอังกฤษ', en: 'English' },
-  { value: 'guitar', th: 'กีตาร์', en: 'Guitar' },
-  { value: 'japanese', th: 'ภาษาญี่ปุ่น', en: 'Japanese' },
-];
+// Bilingual labels keyed by ClassKind. The `Record<ClassKind, …>` annotation is
+// exhaustive: adding a kind to the schema enum forces a label here (compile error
+// otherwise), so the form's options can never silently drift from the DB enum.
+const KIND_LABELS: Record<ClassKind, { th: string; en: string }> = {
+  english: { th: 'ภาษาอังกฤษ', en: 'English' },
+  guitar: { th: 'กีตาร์', en: 'Guitar' },
+  japanese: { th: 'ภาษาญี่ปุ่น', en: 'Japanese' },
+};
+
+const KIND_VALUES = Object.keys(KIND_LABELS) as ClassKind[];
+
+/** Narrow the untyped string from the Radix Select back to a ClassKind. */
+function isClassKind(value: string): value is ClassKind {
+  return value in KIND_LABELS;
+}
 
 const DAY_OPTIONS: { value: number; th: string; en: string }[] = [
   { value: 0, th: 'อาทิตย์', en: 'Sunday' },
@@ -151,14 +161,19 @@ export function ClassOfferingDialog({ locale, offering, children }: ClassOfferin
             </div>
             <div className="flex flex-col gap-2">
               <Label htmlFor="kind">{tr('ประเภท', 'Kind')}</Label>
-              <Select value={kind} onValueChange={(v) => setKind(v as ClassKind)}>
+              <Select
+                value={kind}
+                onValueChange={(v) => {
+                  if (isClassKind(v)) setKind(v);
+                }}
+              >
                 <SelectTrigger id="kind">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {KIND_OPTIONS.map((opt) => (
-                    <SelectItem key={opt.value} value={opt.value}>
-                      {pick(opt.th, opt.en, locale)}
+                  {KIND_VALUES.map((value) => (
+                    <SelectItem key={value} value={value}>
+                      {pick(KIND_LABELS[value].th, KIND_LABELS[value].en, locale)}
                     </SelectItem>
                   ))}
                 </SelectContent>

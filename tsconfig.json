@@ -4,8 +4,9 @@
     "lib": [
       "dom",
       "dom.iterable",
-      "esnext"
+      "es2022"
     ],
+    "moduleDetection": "force",
     "allowJs": false,
     "skipLibCheck": true,
     "strict": true,

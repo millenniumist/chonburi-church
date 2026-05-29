@@ -4,14 +4,16 @@ import { z } from 'zod';
 import { revalidatePath } from 'next/cache';
 import { eq } from 'drizzle-orm';
 import { db } from '@/lib/db';
-import { orders } from '@/lib/db/schema';
+import { orderStatus, orders } from '@/lib/db/schema';
 import { requireRole } from '@/lib/auth';
 import type { ActionResult } from '@/lib/forms';
 import type { OrderStatus } from '@/lib/db/schema';
 
 const advanceInputSchema = z.object({
   orderId: z.uuid(),
-  toStatus: z.enum(['preparing', 'ready', 'completed', 'cancelled']),
+  // Derived from the schema enum: a client may move an order to any non-initial
+  // status; 'pending' is the creation state and is never a valid target.
+  toStatus: z.enum(orderStatus.enumValues).exclude(['pending']),
 });
 
 export type AdvanceOrderInput = z.infer<typeof advanceInputSchema>;
