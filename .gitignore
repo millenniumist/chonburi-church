@@ -82,3 +82,7 @@ pi-data-dump.json
 .gemini/
 gha-creds-*.json
 .opencode/
+
+# local test artifacts
+.playwright-mcp/
+*.local.png
