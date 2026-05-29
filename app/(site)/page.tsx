@@ -1,29 +1,24 @@
-import Link from 'next/link';
-import { site } from '@/content/site';
-import { t } from '@/lib/i18n';
+import { Separator } from '@/components/ui/separator';
+import { getLocale } from '@/lib/locale';
+import { Hero } from '@/components/landing/hero';
+import { Gospel } from '@/components/landing/gospel';
+import { Story } from '@/components/landing/story';
+import { FirstVisit } from '@/components/landing/first-visit';
+import { ClassesTeaser } from '@/components/landing/classes-teaser';
+import { VisitBand } from '@/components/landing/visit-band';
 
-// Placeholder landing — Slice 1 replaces this with the full designed page.
-export default function HomePage() {
+export default async function HomePage() {
+  const locale = await getLocale();
+
   return (
-    <main className="mx-auto flex min-h-screen max-w-2xl flex-col items-center justify-center gap-8 px-6 text-center">
-      <span className="rounded-full border px-4 py-1 text-sm text-muted-foreground">
-        {t(site.tagline)}
-      </span>
-      <h1 className="text-balance text-4xl font-bold tracking-tight sm:text-5xl">
-        {t(site.hero.heading)}
-      </h1>
-      <p className="text-pretty text-lg text-muted-foreground">{t(site.hero.body)}</p>
-      <div className="flex flex-wrap items-center justify-center gap-3">
-        <Link
-          href="/menu"
-          className="rounded-full bg-primary px-6 py-3 font-medium text-primary-foreground"
-        >
-          {t(site.hero.primaryCta)}
-        </Link>
-        <Link href="/classes" className="rounded-full border px-6 py-3 font-medium">
-          {t(site.classesTeaser.cta)}
-        </Link>
-      </div>
+    <main>
+      <Hero locale={locale} />
+      <Gospel locale={locale} />
+      <Story locale={locale} />
+      <FirstVisit locale={locale} />
+      <ClassesTeaser locale={locale} />
+      <Separator className="mx-auto max-w-5xl" />
+      <VisitBand locale={locale} />
     </main>
   );
 }
