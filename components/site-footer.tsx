@@ -2,10 +2,15 @@ import Link from 'next/link';
 import { Facebook, Mail, MapPin, Phone, Youtube } from 'lucide-react';
 import { getLocale } from '@/lib/locale';
 import { pick, t } from '@/lib/i18n';
-import { church, site } from '@/content/site';
+import { site } from '@/content/site';
+import type { ChurchContent } from '@/lib/cms/sections';
+import { getContent } from '@/lib/cms/read';
 
-export async function SiteFooter() {
-  const locale = await getLocale();
+export async function SiteFooter({ content }: { content?: ChurchContent } = {}) {
+  const [locale, churchContent] = await Promise.all([
+    getLocale(),
+    content ? Promise.resolve(content) : getContent('church'),
+  ]);
 
   return (
     <footer className="mt-16 border-t bg-muted/30">
@@ -13,10 +18,10 @@ export async function SiteFooter() {
         <div>
           <p className="font-semibold">{t(site.name, locale)}</p>
           <p className="mt-2 text-sm text-muted-foreground">{t(site.tagline, locale)}</p>
-          <p className="mt-3 text-sm text-muted-foreground">{t(church.legalName, locale)}</p>
+          <p className="mt-3 text-sm text-muted-foreground">{t(churchContent.legalName, locale)}</p>
           <div className="mt-4 flex gap-3">
             <a
-              href={church.social.facebook}
+              href={churchContent.social.facebook}
               target="_blank"
               rel="noreferrer"
               aria-label="Facebook"
@@ -25,7 +30,7 @@ export async function SiteFooter() {
               <Facebook className="size-5" />
             </a>
             <a
-              href={church.social.youtube}
+              href={churchContent.social.youtube}
               target="_blank"
               rel="noreferrer"
               aria-label="YouTube"
@@ -62,25 +67,25 @@ export async function SiteFooter() {
           <ul className="mt-2 space-y-2 text-muted-foreground">
             <li className="flex items-start gap-2">
               <MapPin className="mt-0.5 size-4 shrink-0" aria-hidden />
-              <a href={church.mapsLink} target="_blank" rel="noreferrer" className="hover:text-foreground">
-                {t(church.address, locale)}
+              <a href={churchContent.mapsLink} target="_blank" rel="noreferrer" className="hover:text-foreground">
+                {t(churchContent.address, locale)}
               </a>
             </li>
             <li className="flex items-center gap-2">
               <Phone className="size-4 shrink-0" aria-hidden />
-              <span>{church.phone}</span>
+              <span>{churchContent.phone}</span>
             </li>
             <li className="flex items-center gap-2">
               <Mail className="size-4 shrink-0" aria-hidden />
-              <a href={`mailto:${church.email}`} className="hover:text-foreground">
-                {church.email}
+              <a href={`mailto:${churchContent.email}`} className="hover:text-foreground">
+                {churchContent.email}
               </a>
             </li>
           </ul>
         </div>
       </div>
       <div className="border-t py-4 text-center text-xs text-muted-foreground">
-        © {new Date().getFullYear()} {t(church.legalName, locale)}
+        © {new Date().getFullYear()} {t(churchContent.legalName, locale)}
       </div>
     </footer>
   );

@@ -7,30 +7,13 @@ services:
       NEXT_TELEMETRY_DISABLED: '1'
       TZ: Asia/Bangkok
       PORT: 8358
-      GOOGLE_SERVICE_ACCOUNT_PATH: /app/privatekey-gsheet.json
-      GOOGLE_SHEETS_SPREADSHEET_ID: ${GOOGLE_SHEETS_SPREADSHEET_ID_PROD:?GOOGLE_SHEETS_SPREADSHEET_ID_PROD is required}
       DATABASE_URL: ${DATABASE_URL_PROD:?DATABASE_URL_PROD is required}
-      DATABASE_URL_SECONDARY: ${DATABASE_URL_SECONDARY_PROD}
-      INTERNAL_API_URL: ${INTERNAL_API_URL_PROD:-http://127.0.0.1:8359}
-      ELASTICSEARCH_ENABLED: ${ELASTICSEARCH_ENABLED:-false}
-      ELASTICSEARCH_NODE: ${ELASTICSEARCH_NODE:-http://host.docker.internal:9200}
-      BULLETINS_STORAGE_PATH: /app/bulletins
-      ADMIN_PASSWORD: ${ADMIN_PASSWORD_PROD}
-      CLOUDINARY_CLOUD_NAME: ${CLOUDINARY_CLOUD_NAME_PROD}
-      CLOUDINARY_API_KEY: ${CLOUDINARY_API_KEY_PROD}
-      CLOUDINARY_API_SECRET: ${CLOUDINARY_API_SECRET_PROD}
-      PAYLOAD_SECRET: ${PAYLOAD_SECRET_PROD:?PAYLOAD_SECRET_PROD is required}
-      # Distinct generic env var for visibility if needed
-      APP_ENV: production
       # Right-size V8 heap below the container limit so GC runs before the cgroup
-      # OOM-kills the process; widen the libuv pool for sharp/Sheets/pg work.
+      # OOM-kills the process; widen the libuv pool for sharp/pg work.
       NODE_OPTIONS: --max-old-space-size=1024
       UV_THREADPOOL_SIZE: 8
     ports:
       - "8359:8358"
-    volumes:
-      - bulletins-data-prod:/app/bulletins
-      - ../privatekey-gsheet.json:/app/privatekey-gsheet.json
     restart: unless-stopped
     # Cap the blast radius on a swap-saturated Pi co-located with other containers.
     mem_limit: 1536m
@@ -40,10 +23,6 @@ services:
       - "host.docker.internal:host-gateway"
     networks:
       - app-network-prod
-
-volumes:
-  bulletins-data-prod:
-    driver: local
 
 networks:
   app-network-prod:

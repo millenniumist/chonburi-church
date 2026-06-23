@@ -5,9 +5,17 @@ import { Button } from '@/components/ui/button';
 import { site } from '@/content/site';
 import { t } from '@/lib/i18n';
 import type { Locale } from '@/lib/i18n';
+import { SECTIONS } from '@/lib/cms/sections';
+import type { HeroContent } from '@/lib/cms/sections';
 import { Reveal } from '@/components/landing/reveal';
 
-export function Hero({ locale }: { locale: Locale }) {
+export function Hero({
+  locale,
+  content = SECTIONS.hero.default,
+}: {
+  locale: Locale;
+  content?: HeroContent;
+}) {
   return (
     <section className="relative overflow-hidden">
       {/* Warm ambient glow backdrop */}
@@ -32,13 +40,13 @@ export function Hero({ locale }: { locale: Locale }) {
 
         <Reveal delay={0.05}>
           <h1 className="mt-6 text-balance text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl">
-            {t(site.hero.heading, locale)}
+            {t(content.heading, locale)}
           </h1>
         </Reveal>
 
         <Reveal delay={0.1}>
           <p className="mx-auto mt-6 max-w-2xl text-pretty text-lg leading-relaxed text-muted-foreground">
-            {t(site.hero.body, locale)}
+            {t(content.body, locale)}
           </p>
         </Reveal>
 
@@ -46,7 +54,7 @@ export function Hero({ locale }: { locale: Locale }) {
           <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Button asChild size="lg" className="w-full rounded-full sm:w-auto">
               <Link href="/menu">
-                {t(site.hero.primaryCta, locale)}
+                {t(content.primaryCta, locale)}
                 <ArrowRight className="size-4" aria-hidden />
               </Link>
             </Button>
@@ -56,7 +64,7 @@ export function Hero({ locale }: { locale: Locale }) {
               variant="outline"
               className="w-full rounded-full sm:w-auto"
             >
-              <Link href="/signup">{t(site.hero.secondaryCta, locale)}</Link>
+              <Link href="/signup">{t(content.secondaryCta, locale)}</Link>
             </Button>
           </div>
         </Reveal>

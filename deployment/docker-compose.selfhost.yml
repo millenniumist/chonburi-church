@@ -7,28 +7,13 @@ services:
       NEXT_TELEMETRY_DISABLED: '1'
       TZ: Asia/Bangkok
       PORT: 8358
-      GOOGLE_SERVICE_ACCOUNT_PATH: /app/privatekey-gsheet.json
-      GOOGLE_SHEETS_SPREADSHEET_ID: ${GOOGLE_SHEETS_SPREADSHEET_ID:?GOOGLE_SHEETS_SPREADSHEET_ID is required}
       DATABASE_URL: ${DATABASE_URL:?DATABASE_URL is required}
-      DATABASE_URL_SECONDARY: ${DATABASE_URL_SECONDARY}
-      INTERNAL_API_URL: ${INTERNAL_API_URL:-http://127.0.0.1:8358}
-      ELASTICSEARCH_ENABLED: ${ELASTICSEARCH_ENABLED:-false}
-      ELASTICSEARCH_NODE: ${ELASTICSEARCH_NODE:-http://host.docker.internal:9200}
-      BULLETINS_STORAGE_PATH: /app/bulletins
-      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
-      CLOUDINARY_CLOUD_NAME: ${CLOUDINARY_CLOUD_NAME}
-      CLOUDINARY_API_KEY: ${CLOUDINARY_API_KEY}
-      CLOUDINARY_API_SECRET: ${CLOUDINARY_API_SECRET}
-      PAYLOAD_SECRET: ${PAYLOAD_SECRET:?PAYLOAD_SECRET is required}
       # Right-size V8 heap below the container limit so GC runs before the cgroup
-      # OOM-kills the process; widen the libuv pool for sharp/Sheets/pg work.
+      # OOM-kills the process; widen the libuv pool for sharp/pg work.
       NODE_OPTIONS: --max-old-space-size=1024
       UV_THREADPOOL_SIZE: 8
     ports:
       - "8358:8358"
-    volumes:
-      - bulletins-data:/app/bulletins
-      - ../privatekey-gsheet.json:/app/privatekey-gsheet.json
     restart: unless-stopped
     # Cap the blast radius on a swap-saturated Pi co-located with other containers.
     mem_limit: 1536m
@@ -38,10 +23,6 @@ services:
       - "host.docker.internal:host-gateway"
     networks:
       - app-network
-
-volumes:
-  bulletins-data:
-    driver: local
 
 networks:
   app-network:

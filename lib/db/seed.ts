@@ -6,6 +6,7 @@
  * Idempotent-ish: uses onConflictDoNothing where a natural key exists.
  */
 import { config } from 'dotenv';
+import { eq } from 'drizzle-orm';
 
 config({ path: '.env.local' });
 config({ path: '.env' });
@@ -16,6 +17,7 @@ async function main() {
   const { hashPassword } = await import('@/lib/auth/password');
   const schema = await import('@/lib/db/schema');
   const { church } = await import('@/content/site');
+  const { SECTIONS, SECTION_KEYS } = await import('@/lib/cms/sections');
 
   // ── Site config (single row, id = 1). Default to a placeholder location;
   //    set the real church coordinates in the admin once it's built.
@@ -136,6 +138,100 @@ async function main() {
       target: schema.users.email,
       set: { role: 'admin', orderingEnabled: true },
     });
+
+  // ── CMS: editable site content (ADR-0004) ────────────────────────────────
+  // Upsert every registered section from the content/site.ts defaults.
+  // `onConflictDoNothing` on the key so admin edits are never clobbered by a
+  // re-seed.
+  for (const key of SECTION_KEYS) {
+    await db
+      .insert(schema.siteContent)
+      .values({ key, value: SECTIONS[key].default })
+      .onConflictDoNothing({ target: schema.siteContent.key });
+  }
+
+  // ── CMS: sample announcements ─────────────────────────────────────────────
+  // Idempotent via the unique `slug`.
+  await db
+    .insert(schema.announcements)
+    .values([
+      {
+        slug: 'grand-opening',
+        titleTh: 'เปิดคาเฟ่แล้ววันนี้!',
+        titleEn: 'Our café is now open!',
+        bodyTh: 'แวะมารับกาแฟฟรีแก้วแรกของคุณได้แล้ววันนี้ เรารอต้อนรับคุณอยู่',
+        bodyEn: 'Come by for your first free cup of coffee — we would love to welcome you.',
+        publishedAt: new Date('2026-05-01T03:00:00.000Z'),
+        active: true,
+        sortOrder: 1,
+      },
+      {
+        slug: 'saturday-classes-open',
+        titleTh: 'เปิดรับสมัครคลาสวันเสาร์',
+        titleEn: 'Saturday classes are open for sign-up',
+        bodyTh: 'คลาสภาษาอังกฤษ กีตาร์ และภาษาญี่ปุ่นเบื้องต้น เรียนฟรีทุกวันเสาร์ สมัครได้แล้ววันนี้',
+        bodyEn: 'Free English, guitar, and basic Japanese classes every Saturday. Sign up today.',
+        publishedAt: new Date('2026-05-10T03:00:00.000Z'),
+        active: true,
+        sortOrder: 2,
+      },
+    ])
+    .onConflictDoNothing({ target: schema.announcements.slug });
+
+  // ── CRM: families, members, donations & class attendance (ADR-0005) ───────
+  // Demo directory data. Guarded on an empty members table so re-seeds don't
+  // duplicate (these rows have no natural unique key).
+  const existingMembers = await db.select().from(schema.members);
+  if (existingMembers.length === 0) {
+    const [adminUser] = await db
+      .select()
+      .from(schema.users)
+      .where(eq(schema.users.email, adminEmail));
+    const [englishClass] = await db
+      .select()
+      .from(schema.classOfferings)
+      .where(eq(schema.classOfferings.slug, 'english-p1-p6'));
+
+    const [somchaiFamily, niranFamily] = await db
+      .insert(schema.families)
+      .values([
+        { name: 'ครอบครัวสมชาย / Somchai family', address: 'ชลบุรี', phone: '081-000-0001' },
+        { name: 'ครอบครัวนิรันดร์ / Niran family', address: 'ชลบุรี', phone: '081-000-0002' },
+      ])
+      .returning();
+
+    const insertedMembers = await db
+      .insert(schema.members)
+      .values([
+        {
+          familyId: somchaiFamily?.id,
+          userId: adminUser?.id ?? null,
+          name: adminName,
+          email: adminEmail,
+          status: 'member',
+          joinedAt: '2024-01-07',
+        },
+        { familyId: somchaiFamily?.id, name: 'เด็กหญิงแก้ว / Kaew', birthDate: '2015-03-12', status: 'member' },
+        { familyId: niranFamily?.id, name: 'นิรันดร์ / Niran', phone: '081-000-0002', status: 'regular', joinedAt: '2025-06-01' },
+        { name: 'ผู้มาเยี่ยม / Walk-in visitor', status: 'visitor' },
+      ])
+      .returning();
+
+    const [primaryMember, childMember] = insertedMembers;
+    if (primaryMember) {
+      await db.insert(schema.donations).values([
+        { memberId: primaryMember.id, donorName: primaryMember.name, fund: 'tithe', amount: 100000, method: 'transfer', receivedAt: '2026-06-01' },
+        { memberId: primaryMember.id, donorName: primaryMember.name, fund: 'general', amount: 50000, method: 'cash', receivedAt: '2026-06-08' },
+        { donorName: 'ผู้ถวายนิรนาม / Anonymous', fund: 'missions', amount: 20000, method: 'promptpay', receivedAt: '2026-06-15' },
+      ]);
+    }
+    if (englishClass && childMember) {
+      await db.insert(schema.classAttendances).values([
+        { classOfferingId: englishClass.id, memberId: childMember.id, sessionDate: '2026-06-07' },
+        { classOfferingId: englishClass.id, memberId: childMember.id, sessionDate: '2026-06-14' },
+      ]);
+    }
+  }
 
   console.log('✅ Seed complete.');
   console.log(`   Admin: ${adminEmail} (set SEED_ADMIN_* env vars to customize)`);

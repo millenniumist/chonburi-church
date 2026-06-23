@@ -6,6 +6,7 @@ import { eq } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { classKind, classOfferings, menuItems } from '@/lib/db/schema';
 import { requireRole } from '@/lib/auth';
+import { imageUrlSchema } from '@/lib/cms/url';
 import type { ActionResult } from '@/lib/forms';
 import type { ClassOffering, MenuItem } from '@/lib/db/schema';
 
@@ -48,18 +49,18 @@ const timeSchema = z
   .trim()
   .regex(/^([01]\d|2[0-3]):[0-5]\d(?::[0-5]\d)?$/, 'time must be HH:MM');
 
+// `imageUrlSchema` (http(s)-only, empty → null) is shared from `@/lib/cms/url`
+// so menu items, class offerings and announcements can never drift.
+
 // ── Menu items ───────────────────────────────────────────────────────────────
 
-const menuItemSchema = z.object({
+export const menuItemSchema = z.object({
   slug: slugSchema,
   nameTh: z.string().trim().min(1).max(120),
   nameEn: z.string().trim().min(1).max(120),
   descriptionTh: optionalText(2000),
   descriptionEn: optionalText(2000),
-  imageUrl: z
-    .union([z.string().trim().url().max(2000), z.literal('')])
-    .optional()
-    .transform((v) => (v ? v : null)),
+  imageUrl: imageUrlSchema,
   category: z.string().trim().min(1).max(60).default('coffee'),
   available: z.boolean().default(true),
   sortOrder: z.coerce.number().int().min(0).max(100000).default(0),
@@ -192,7 +193,7 @@ export async function deleteMenuItem(input: DeleteMenuItemInput): Promise<Action
 
 // ── Class offerings ──────────────────────────────────────────────────────────
 
-const classOfferingSchema = z
+export const classOfferingSchema = z
   .object({
     slug: slugSchema,
     kind: z.enum(classKind.enumValues),
@@ -200,6 +201,7 @@ const classOfferingSchema = z
     nameEn: z.string().trim().min(1).max(120),
     descriptionTh: optionalText(2000),
     descriptionEn: optionalText(2000),
+    imageUrl: imageUrlSchema,
     level: optionalText(60),
     dayOfWeek: z.coerce.number().int().min(0).max(6).default(6),
     startTime: timeSchema,
@@ -245,7 +247,7 @@ export async function createClassOffering(
   return { ok: true, data: row };
 }
 
-const updateClassOfferingSchema = z
+export const updateClassOfferingSchema = z
   .object({
     id: z.string().uuid(),
     slug: slugSchema,
@@ -254,6 +256,7 @@ const updateClassOfferingSchema = z
     nameEn: z.string().trim().min(1).max(120),
     descriptionTh: optionalText(2000),
     descriptionEn: optionalText(2000),
+    imageUrl: imageUrlSchema,
     level: optionalText(60),
     dayOfWeek: z.coerce.number().int().min(0).max(6).default(6),
     startTime: timeSchema,

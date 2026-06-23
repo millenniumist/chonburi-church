@@ -75,8 +75,26 @@ export default async function ClassesPage() {
             const timeRange = `${formatTime(offering.startTime)} – ${formatTime(offering.endTime)}`;
 
             return (
-              <Card key={offering.id} className="flex flex-col justify-between">
-                <CardHeader>
+              <Card
+                key={offering.id}
+                className={
+                  offering.imageUrl
+                    ? 'flex flex-col justify-between overflow-hidden pt-0'
+                    : 'flex flex-col justify-between'
+                }
+              >
+                {offering.imageUrl ? (
+                  // Class images are admin-supplied arbitrary URLs; a plain <img>
+                  // avoids remotePatterns config and keeps the Pi's image optimizer
+                  // idle (matches the menu pattern).
+                  <img
+                    src={offering.imageUrl}
+                    alt={name}
+                    className="aspect-[16/9] w-full object-cover"
+                    loading="lazy"
+                  />
+                ) : null}
+                <CardHeader className={offering.imageUrl ? 'pt-6' : undefined}>
                   <div className="flex items-start justify-between gap-3">
                     <CardTitle className="text-xl">{name}</CardTitle>
                     <Badge>{tr('ฟรี', 'FREE')}</Badge>

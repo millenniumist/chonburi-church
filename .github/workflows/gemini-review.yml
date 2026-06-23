@@ -108,3 +108,20 @@ jobs:
               }
             }
           prompt: '/gemini-review'
+
+      - name: 'Notify reviewer'
+        if: |-
+          ${{ github.event.pull_request.number || github.event.issue.number }}
+        env:
+          GITHUB_TOKEN: '${{ steps.mint_identity_token.outputs.token || secrets.GITHUB_TOKEN || github.token }}'
+          ISSUE_NUMBER: '${{ github.event.pull_request.number || github.event.issue.number }}'
+          REPOSITORY: '${{ github.repository }}'
+          REVIEWER: '${{ vars.REVIEW_NOTIFY_HANDLE || ''millenniumist'' }}'
+        run: |-
+          # Request the reviewer on the PR (ignored if they authored it or it's already requested)
+          gh api "repos/${REPOSITORY}/pulls/${ISSUE_NUMBER}/requested_reviewers" \
+            -X POST -f "reviewers[]=${REVIEWER}" >/dev/null 2>&1 || true
+          # Always @-mention so the reviewer is notified the automated review ran
+          gh issue comment "${ISSUE_NUMBER}" \
+            --body "🔔 @${REVIEWER} an automated Gemini code review has completed on this PR — please take a look." \
+            --repo "${REPOSITORY}"

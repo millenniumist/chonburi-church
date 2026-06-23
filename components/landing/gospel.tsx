@@ -1,11 +1,18 @@
 import { Heart } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
-import { site } from '@/content/site';
 import { t } from '@/lib/i18n';
 import type { Locale } from '@/lib/i18n';
+import { SECTIONS } from '@/lib/cms/sections';
+import type { GospelContent } from '@/lib/cms/sections';
 import { Reveal } from '@/components/landing/reveal';
 
-export function Gospel({ locale }: { locale: Locale }) {
+export function Gospel({
+  locale,
+  content = SECTIONS.gospel.default,
+}: {
+  locale: Locale;
+  content?: GospelContent;
+}) {
   return (
     <section className="bg-accent/30">
       <div className="mx-auto max-w-3xl px-6 py-20 text-center sm:py-24">
@@ -16,7 +23,7 @@ export function Gospel({ locale }: { locale: Locale }) {
         </Reveal>
         <Reveal delay={0.05}>
           <h2 className="mt-6 text-balance text-3xl font-semibold tracking-tight sm:text-4xl">
-            {t(site.gospel.heading, locale)}
+            {t(content.heading, locale)}
           </h2>
         </Reveal>
         <Reveal delay={0.1}>
@@ -24,7 +31,7 @@ export function Gospel({ locale }: { locale: Locale }) {
         </Reveal>
         <Reveal delay={0.15}>
           <p className="mt-6 text-pretty text-lg leading-relaxed text-muted-foreground">
-            {t(site.gospel.body, locale)}
+            {t(content.body, locale)}
           </p>
         </Reveal>
       </div>

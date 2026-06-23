@@ -175,17 +175,16 @@ function OrderableCard({
     <Card
       className={cn('overflow-hidden pt-0 transition-shadow', quantity > 0 && 'ring-2 ring-primary')}
     >
-      {item.imageUrl ? (
-        // Menu images are admin-supplied arbitrary URLs; a plain <img> avoids
-        // remotePatterns config and keeps the Pi's image optimizer idle.
-        <img
-          src={item.imageUrl}
-          alt={name}
-          className="aspect-[4/3] w-full object-cover"
-          loading="lazy"
-        />
-      ) : null}
-      <CardHeader className={item.imageUrl ? 'pt-6' : undefined}>
+      {/* Menu images are admin-supplied arbitrary URLs; a plain <img> avoids
+          remotePatterns config and keeps the Pi's image optimizer idle. Falls
+          back to a shared placeholder when no image is set. */}
+      <img
+        src={item.imageUrl ?? '/images/menu-placeholder.webp'}
+        alt={name}
+        className="aspect-[4/3] w-full object-cover"
+        loading="lazy"
+      />
+      <CardHeader className="pt-6">
         <div className="flex items-start justify-between gap-2">
           <CardTitle className="text-base">{name}</CardTitle>
           <Badge variant="secondary">{pick('ฟรี', 'Free', locale)}</Badge>

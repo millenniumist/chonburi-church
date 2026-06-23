@@ -4,10 +4,16 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
   CalendarClock,
+  Church,
+  ClipboardCheck,
   Coffee,
+  Contact,
+  FileText,
   GraduationCap,
+  HandCoins,
   LayoutDashboard,
   ListChecks,
+  Megaphone,
   MapPinned,
   Settings,
   Users,
@@ -25,12 +31,18 @@ type NavItem = {
 
 const ITEMS: NavItem[] = [
   { href: '/admin', icon: LayoutDashboard, th: 'แดชบอร์ด', en: 'Dashboard' },
+  { href: '/admin/content', icon: FileText, th: 'เนื้อหาเว็บไซต์', en: 'Content' },
+  { href: '/admin/church', icon: Church, th: 'ข้อมูลคริสตจักร', en: 'Church info' },
+  { href: '/admin/announcements', icon: Megaphone, th: 'ประกาศ', en: 'Announcements' },
   { href: '/admin/menu', icon: Coffee, th: 'เมนู', en: 'Menu' },
   { href: '/admin/classes', icon: GraduationCap, th: 'คลาสเรียน', en: 'Classes' },
   { href: '/admin/services', icon: CalendarClock, th: 'รอบนมัสการ', en: 'Services' },
   { href: '/admin/config', icon: Settings, th: 'ตั้งค่าเว็บไซต์', en: 'Site config' },
   { href: '/admin/users', icon: Users, th: 'ผู้ใช้', en: 'Users' },
   { href: '/admin/attendance', icon: ListChecks, th: 'การเช็คอิน', en: 'Attendance' },
+  { href: '/admin/members', icon: Contact, th: 'สมาชิก', en: 'Members' },
+  { href: '/admin/donations', icon: HandCoins, th: 'การถวาย', en: 'Giving' },
+  { href: '/admin/class-attendance', icon: ClipboardCheck, th: 'เช็คชื่อเรียน', en: 'Class attendance' },
 ];
 
 type AdminNavProps = {

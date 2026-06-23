@@ -2,12 +2,19 @@ import Link from 'next/link';
 import { ArrowRight, GraduationCap, Guitar, Languages } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { site } from '@/content/site';
 import { t } from '@/lib/i18n';
 import type { Locale } from '@/lib/i18n';
+import { SECTIONS } from '@/lib/cms/sections';
+import type { ClassesTeaserContent } from '@/lib/cms/sections';
 import { Reveal } from '@/components/landing/reveal';
 
-export function ClassesTeaser({ locale }: { locale: Locale }) {
+export function ClassesTeaser({
+  locale,
+  content = SECTIONS.classesTeaser.default,
+}: {
+  locale: Locale;
+  content?: ClassesTeaserContent;
+}) {
   return (
     <section className="mx-auto max-w-5xl px-6 py-20 sm:py-24">
       <Reveal>
@@ -19,10 +26,10 @@ export function ClassesTeaser({ locale }: { locale: Locale }) {
 
             <div className="flex-1">
               <h2 className="text-balance text-2xl font-semibold tracking-tight sm:text-3xl">
-                {t(site.classesTeaser.heading, locale)}
+                {t(content.heading, locale)}
               </h2>
               <p className="mt-3 text-pretty text-base leading-relaxed text-muted-foreground">
-                {t(site.classesTeaser.body, locale)}
+                {t(content.body, locale)}
               </p>
               <div
                 className="mt-5 flex flex-wrap justify-center gap-4 text-sm text-muted-foreground md:justify-start"
@@ -42,7 +49,7 @@ export function ClassesTeaser({ locale }: { locale: Locale }) {
 
             <Button asChild size="lg" className="rounded-full">
               <Link href="/classes">
-                {t(site.classesTeaser.cta, locale)}
+                {t(content.cta, locale)}
                 <ArrowRight className="size-4" aria-hidden />
               </Link>
             </Button>

@@ -27,6 +27,11 @@ The product goal is warmth + low friction: make it easy and inviting for a stran
 - **Order** — a request for free coffee, fulfilled at pickup. Has a short **pickup code** and moves through a status state machine.
 - **Class offering** — a recurring free Saturday class (English P1–P6, Guitar, Japanese basic).
 - **Enrollment** — a signup for a class offering (by an account holder *or* a guest with name + phone).
+- **Member (directory)** — a *person* record in the church directory: name, contact, optional birth date, family, and membership `status`. Independent of a login `user` (`members.userId` is optional + unique) so children and non-login visitors can be listed. Distinct from the `member` *role* on `users`.
+- **Family** — a household several directory members share (name, address, phone).
+- **Donation** — a recorded gift: amount (**integer satang**, never float), `fund`, `method` (cash/transfer/PromptPay), and gift date. Recorded by an admin — no online payment processing. Powers per-member yearly **giving statements**.
+- **Giving statement** — a printable per-member summary of a calendar year's donations (HTML + `@media print`; no PDF dependency).
+- **Class attendance** — a register row: a directory member was present at a class offering on a date. Unique per `(classOffering, member, sessionDate)`.
 
 ## The classes (seed data)
 
@@ -47,10 +52,13 @@ All free, every Saturday:
 5. **One check-in per service day.** `attendances` is unique on `(userId, serviceDate)`.
 6. **Sessions are signed/hashed, never plaintext.** No base64 JSON cookies (the old app's security defect). Session tokens are random, the cookie holds the token, the DB stores only its SHA-256 hash. (See ADR-0002.)
 7. **Bilingual th/en everywhere.** Every user-facing content field has a `*Th` and `*En` variant. Thai is the default locale.
+8. **Money is integer satang.** Donation amounts are stored as integer satang (THB minor units) — never floating point. THB is the only currency.
+9. **Directory ≠ login.** A `members` row is a person, not an account; `members.userId` is optional and `unique`. Operational data — person/family/donor names, addresses, notes — is single-field, **not** translated th/en (invariant 7 governs public *content* copy, not directory data). Admin UI chrome stays bilingual via `pick`.
+10. **One class-attendance per person per day.** `class_attendances` is unique on `(classOfferingId, memberId, sessionDate)` — mirrors the service-attendance rule (#5).
 
 ## What we are NOT building (explicit non-goals)
 
-- No payments, no cart checkout with money, no PromptPay/Stripe. Coffee is free.
+- No payments, no cart checkout with money, no PromptPay/Stripe **for coffee**. Coffee is free. (Donations are *recorded by an admin* for the directory & giving statements — there is **no online payment processing**; the church receives gifts out-of-band. See ADR-0005.)
 - No Prisma, no Payload CMS (removed — see ADR-0001).
 - No multi-location. GPS radius assumes a single café site.
 - No real-time kitchen display / websockets in v1 (the Pi has ~1GB runtime heap). Order status is poll/refresh; revisit if needed.
@@ -62,6 +70,7 @@ See `docs/adr/` for the full architecture decision records. Summary:
 - **ADR-0001** — Greenfield Drizzle + strict TypeScript; drop Prisma & Payload.
 - **ADR-0002** — Hand-rolled DB-session auth on `node:crypto` (scrypt + SHA-256), zero native deps (Pi/alpine-safe).
 - **ADR-0003** — Keep the existing Docker → Raspberry Pi GitOps pipeline; reuse the Postgres instance, wipe the schema.
+- **ADR-0005** — Native member directory, donations & class attendance (rejected ChurchCRM); members are people records, separate from login users.
 
 ## Constraints from the deployment target
 

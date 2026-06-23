@@ -1,19 +1,26 @@
-import { site } from '@/content/site';
 import { t } from '@/lib/i18n';
 import type { Locale } from '@/lib/i18n';
+import { SECTIONS } from '@/lib/cms/sections';
+import type { StoryContent } from '@/lib/cms/sections';
 import { Reveal } from '@/components/landing/reveal';
 
-export function Story({ locale }: { locale: Locale }) {
+export function Story({
+  locale,
+  content = SECTIONS.story.default,
+}: {
+  locale: Locale;
+  content?: StoryContent;
+}) {
   return (
     <section className="mx-auto max-w-5xl px-6 py-20 sm:py-24">
       <div className="grid items-center gap-10 md:grid-cols-2">
         <Reveal from="up">
           <div>
             <h2 className="text-balance text-3xl font-semibold tracking-tight sm:text-4xl">
-              {t(site.story.heading, locale)}
+              {t(content.heading, locale)}
             </h2>
             <p className="mt-6 text-pretty text-lg leading-relaxed text-muted-foreground">
-              {t(site.story.body, locale)}
+              {t(content.body, locale)}
             </p>
           </div>
         </Reveal>

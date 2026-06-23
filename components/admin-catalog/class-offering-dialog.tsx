@@ -98,6 +98,7 @@ export function ClassOfferingDialog({ locale, offering, children }: ClassOfferin
       nameEn: String(data.get('nameEn') ?? ''),
       descriptionTh: String(data.get('descriptionTh') ?? ''),
       descriptionEn: String(data.get('descriptionEn') ?? ''),
+      imageUrl: String(data.get('imageUrl') ?? ''),
       level: String(data.get('level') ?? ''),
       dayOfWeek,
       startTime: String(data.get('startTime') ?? ''),
@@ -213,6 +214,18 @@ export function ClassOfferingDialog({ locale, offering, children }: ClassOfferin
                 defaultValue={offering?.descriptionEn ?? ''}
               />
             </div>
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="imageUrl">{tr('ลิงก์รูปภาพ (ไม่บังคับ)', 'Image URL (optional)')}</Label>
+            <Input
+              id="imageUrl"
+              name="imageUrl"
+              type="url"
+              inputMode="url"
+              defaultValue={offering?.imageUrl ?? ''}
+              placeholder="https://…"
+            />
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
