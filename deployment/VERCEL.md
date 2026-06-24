@@ -3,6 +3,19 @@
 The production target (ADR-0006). Public site **and** `/admin` run on Vercel;
 Postgres is Neon. One-time setup, then push-to-deploy.
 
+> **As built (2026-06-24)** — LIVE at https://chonburi-church.vercel.app
+> (team `millenniumists-projects`, project `chonburi-church`, GitHub-connected).
+> Neon resource `chonburi-db` provisioned via `vercel integration add neon`.
+> **Migrations + seed run inside the build** via the `vercel-build` script
+> (`drizzle-kit migrate && SEED_DEMO=0 tsx lib/db/seed.ts && next build`) because
+> the dev box's network can't open a Postgres session to Neon — the Vercel build
+> network can. So you do NOT run migrations by hand (step 2 below is the manual
+> alternative if you ever have a machine with DB access). Required Vercel env:
+> `DATABASE_URL`/`DATABASE_URL_UNPOOLED` (auto-injected by the Neon integration),
+> `SEED_ADMIN_EMAIL`/`SEED_ADMIN_PASSWORD`/`SEED_ADMIN_NAME`, `NEXT_PUBLIC_SITE_URL`.
+> `TZ` is reserved on Vercel (can't be set) — date code passes `Asia/Bangkok`
+> explicitly, so it's fine.
+
 ## 1. Create the Neon database
 
 1. Create a project at <https://neon.tech> (region close to your users, e.g. `ap-southeast-1` Singapore for Thailand).
