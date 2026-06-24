@@ -179,10 +179,12 @@ async function main() {
     .onConflictDoNothing({ target: schema.announcements.slug });
 
   // ── CRM: families, members, donations & class attendance (ADR-0005) ───────
-  // Demo directory data. Guarded on an empty members table so re-seeds don't
-  // duplicate (these rows have no natural unique key).
-  const existingMembers = await db.select().from(schema.members);
-  if (existingMembers.length === 0) {
+  // Demo directory data. Skipped in production (pass SEED_DEMO=0) so fake
+  // people/donations never pollute a real DB; otherwise guarded on an empty
+  // members table so re-seeds don't duplicate (no natural unique key).
+  const existingMembers =
+    process.env.SEED_DEMO === '0' ? [] : await db.select().from(schema.members);
+  if (process.env.SEED_DEMO !== '0' && existingMembers.length === 0) {
     const [adminUser] = await db
       .select()
       .from(schema.users)

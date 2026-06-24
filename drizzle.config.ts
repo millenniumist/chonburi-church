@@ -5,7 +5,10 @@ import { defineConfig } from 'drizzle-kit';
 config({ path: '.env.local' });
 config({ path: '.env' });
 
-const url = process.env.DATABASE_URL;
+// Prefer a direct (unpooled) connection for DDL when present — e.g. Neon injects
+// DATABASE_URL_UNPOOLED alongside the pooled DATABASE_URL. Migrations run cleaner
+// over a direct connection than through a transaction pooler.
+const url = process.env.DATABASE_URL_UNPOOLED ?? process.env.DATABASE_URL;
 if (!url) {
   throw new Error('DATABASE_URL is not set — needed for drizzle-kit. See .env.example.');
 }

@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "TZ=Asia/Bangkok next dev",
     "build": "TZ=Asia/Bangkok next build",
+    "vercel-build": "drizzle-kit migrate && SEED_DEMO=0 tsx lib/db/seed.ts && TZ=Asia/Bangkok next build",
     "start": "TZ=Asia/Bangkok next start",
     "typecheck": "tsc --noEmit",
     "lint": "eslint",
