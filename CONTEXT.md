@@ -71,7 +71,10 @@ See `docs/adr/` for the full architecture decision records. Summary:
 - **ADR-0002** — Hand-rolled DB-session auth on `node:crypto` (scrypt + SHA-256), zero native deps (Pi/alpine-safe).
 - **ADR-0003** — Keep the existing Docker → Raspberry Pi GitOps pipeline; reuse the Postgres instance, wipe the schema.
 - **ADR-0005** — Native member directory, donations & class attendance (rejected ChurchCRM); members are people records, separate from login users.
+- **ADR-0006** — Migrate hosting to Vercel + Neon Postgres (supersedes ADR-0003); all-on-Vercel behind admin auth, with a small serverless-pooled `pg` pool.
 
 ## Constraints from the deployment target
 
-The app runs on a Raspberry Pi via Docker (`100.110.210.24`), capped at ~1.5GB RAM / 2 CPU, port 8358, `TZ=Asia/Bangkok`. Build happens off-Pi (M2 cross-compile, ARM64). Keep dependencies lean and **avoid native-compiled modules** that complicate alpine/ARM builds — this is why auth uses `node:crypto`, not `argon2`/`bcrypt`-native.
+**As of ADR-0006 the target is Vercel + Neon Postgres** (superseding the Raspberry Pi). Implications: the app is **stateless/serverless** — no on-box state, no long-lived background work, image optimization handled by Vercel; the DB is reached via Neon's **pooled** connection string with a small per-instance `pg` pool (`DB_POOL_MAX`, see `lib/db/index.ts`); set `TZ=Asia/Bangkok` + `DATABASE_URL` in the Vercel project env; run `drizzle-kit migrate` against Neon out-of-band (Vercel does not auto-migrate). Keeping dependencies lean and **avoiding native-compiled modules** still holds — it's why auth uses `node:crypto` (works unchanged on serverless), not `argon2`/`bcrypt`-native. Runbook: `deployment/VERCEL.md`.
+
+_Historical (pre-ADR-0006): ran on a Raspberry Pi via Docker, ~1.5GB RAM / 2 CPU, port 8358, ARM64 cross-compiled off-Pi._

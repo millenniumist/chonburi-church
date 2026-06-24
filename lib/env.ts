@@ -9,6 +9,9 @@ const schema = z.object({
   DATABASE_URL: z.string().min(1, 'DATABASE_URL is required'),
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
   SESSION_COOKIE_NAME: z.string().min(1).default('cag_session'),
+  // Per-process pg pool size. Small for serverless (each Vercel instance keeps
+  // its own pool behind Neon's connection pooler); raise on a long-lived host.
+  DB_POOL_MAX: z.coerce.number().int().positive().default(1),
 });
 
 const parsed = schema.safeParse(process.env);
