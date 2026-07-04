@@ -19,6 +19,7 @@ services:
       CLOUDINARY_CLOUD_NAME: ${CLOUDINARY_CLOUD_NAME_PROD}
       CLOUDINARY_API_KEY: ${CLOUDINARY_API_KEY_PROD}
       CLOUDINARY_API_SECRET: ${CLOUDINARY_API_SECRET_PROD}
+      PAYLOAD_SECRET: ${PAYLOAD_SECRET_PROD:?PAYLOAD_SECRET_PROD is required}
       # Distinct generic env var for visibility if needed
       APP_ENV: production
     ports:

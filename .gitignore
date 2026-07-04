@@ -81,6 +81,10 @@ pi-data-dump.json
 
 .gemini/
 gha-creds-*.json
+.opencode/
 
 # site content snapshot must be committed (rendered by /ministries)
 !content/site-data.json
+
+# build artifact (vercel-build esbuild output)
+payload.config.bundle.mjs

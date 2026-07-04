@@ -37,6 +37,9 @@ ENV DATABASE_URL="postgresql://placeholder:placeholder@localhost:5432/placeholde
 # Generate Prisma Client
 RUN npx prisma generate
 
+# Bump Node heap so TS check / Payload don't OOM during build
+ENV NODE_OPTIONS="--max-old-space-size=6144"
+
 # Clean any existing build artifacts
 RUN rm -rf .next
 
