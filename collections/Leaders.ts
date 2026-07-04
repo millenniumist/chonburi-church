@@ -33,6 +33,13 @@ export const Leaders: CollectionConfig = {
       relationTo: 'media',
     },
     {
+      name: 'imageUrl',
+      type: 'text',
+      admin: {
+        description: 'Image URL (used when no upload is attached)',
+      },
+    },
+    {
       name: 'order',
       type: 'number',
       defaultValue: 0,

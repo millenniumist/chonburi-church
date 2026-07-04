@@ -32,7 +32,13 @@ export const Bulletins: CollectionConfig = {
       name: 'file',
       type: 'upload',
       relationTo: 'media',
-      required: true,
+    },
+    {
+      name: 'fileUrl',
+      type: 'text',
+      admin: {
+        description: 'Cloudinary PDF URL (used when no upload is attached)',
+      },
     },
     {
       name: 'isActive',

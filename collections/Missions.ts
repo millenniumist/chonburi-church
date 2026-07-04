@@ -78,6 +78,13 @@ export const Missions: CollectionConfig = {
       relationTo: 'media',
     },
     {
+      name: 'heroImageUrl',
+      type: 'text',
+      admin: {
+        description: 'Hero image URL (used when no upload is attached)',
+      },
+    },
+    {
       name: 'images',
       type: 'array',
       fields: [
@@ -85,6 +92,20 @@ export const Missions: CollectionConfig = {
           name: 'image',
           type: 'upload',
           relationTo: 'media',
+          required: true,
+        },
+      ],
+    },
+    {
+      name: 'imageUrls',
+      type: 'array',
+      admin: {
+        description: 'Image URLs (Cloudinary)',
+      },
+      fields: [
+        {
+          name: 'url',
+          type: 'text',
           required: true,
         },
       ],

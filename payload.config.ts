@@ -12,6 +12,11 @@ import { Leaders } from './collections/Leaders'
 import { Missions } from './collections/Missions'
 import { PageContent } from './collections/PageContent'
 import { NavigationItems } from './collections/NavigationItems'
+import { FutureProjects } from './collections/FutureProjects'
+import { FinancialRecords } from './collections/FinancialRecords'
+import { FinancialCategories } from './collections/FinancialCategories'
+import { Feedback } from './collections/Feedback'
+import { ContactInfo } from './globals/ContactInfo'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -40,7 +45,12 @@ export default buildConfig({
     Missions,
     PageContent,
     NavigationItems,
+    FutureProjects,
+    FinancialRecords,
+    FinancialCategories,
+    Feedback,
   ],
+  globals: [ContactInfo],
   editor: lexicalEditor(),
   localization: {
     locales: ['th', 'en'],
