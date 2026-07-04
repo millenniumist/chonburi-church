@@ -10,6 +10,9 @@ export const metadata = {
   description: 'สูจิบัตรประจำสัปดาห์ของคริสตจักรชลบุรี ภาค 7 / Weekly Church Bulletins',
 };
 
+// DB-backed page — never prerender at build time (matches the other public pages).
+export const dynamic = 'force-dynamic';
+
 const BULLETINS_PER_PAGE = 12;
 
 export default async function BulletinsPage({ searchParams }) {

@@ -4,10 +4,11 @@
   "private": true,
   "scripts": {
     "dev": "bash -c 'source .env && TZ=Asia/Bangkok DATABASE_URL=$DATABASE_URL_DEV next dev --turbopack'",
-    "dev:db:push": "bash -c 'source .env && TZ=Asia/Bangkok DATABASE_URL=$DATABASE_URL_DEV npx prisma db push'",
+    "dev:db:push": "bash -c 'source .env && TZ=Asia/Bangkok DATABASE_URL=$DATABASE_URL_DEV DATABASE_URL_UNPOOLED=$DATABASE_URL_DEV npx prisma db push'",
     "dev:db:studio": "bash -c 'source .env && TZ=Asia/Bangkok DATABASE_URL=$DATABASE_URL_DEV npx prisma studio'",
     "db:sync": "node scripts/db-sync.mjs",
     "build": "TZ=Asia/Bangkok next build --webpack",
+    "vercel-build": "prisma generate && DATABASE_URL=\"${APP_DATABASE_URL:-$DATABASE_URL}\" DATABASE_URL_UNPOOLED=\"${APP_DATABASE_URL_UNPOOLED:-$DATABASE_URL_UNPOOLED}\" prisma migrate deploy && TZ=Asia/Bangkok next build --webpack",
     "start": "TZ=Asia/Bangkok next start",
     "lint": "eslint",
     "cleanup:financial": "node scripts/cleanupFinancialRecords.mjs"

@@ -1,9 +1,7 @@
 import { NextResponse } from 'next/server';
 import { verifyAdminAuth } from '@/lib/auth';
-import { getBulletins, createBulletin, ensureBulletinsDir, formatBulletinFilename, isSunday } from '@/lib/bulletins';
+import { getBulletins, createBulletin, formatBulletinFilename, isSunday } from '@/lib/bulletins';
 import { v2 as cloudinary } from 'cloudinary';
-import { promises as fs } from 'fs';
-import path from 'path';
 import { withLogging, logError } from '@/lib/logger';
 
 // Configure Cloudinary
@@ -12,8 +10,6 @@ cloudinary.config({
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET
 });
-
-const BULLETINS_DIR = process.env.BULLETINS_STORAGE_PATH || '/app/bulletins';
 
 // GET - List all bulletins
 async function getHandler(request) {
@@ -71,67 +67,46 @@ async function postHandler(request) {
       return NextResponse.json({ error: 'Only PDF files are allowed' }, { status: 400 });
     }
 
-    // Ensure bulletins directory exists
-    const dirCreated = await ensureBulletinsDir();
-    if (!dirCreated) {
-      logError(request, new Error('Failed to create bulletins directory'), {
-        operation: 'create_bulletins_dir',
-        path: BULLETINS_DIR
-      });
-      return NextResponse.json({
-        error: 'Failed to create bulletins directory',
-        details: 'Check server permissions'
-      }, { status: 500 });
-    }
-
     // Generate filename
     const filename = formatBulletinFilename(date);
-    const localPath = path.join(BULLETINS_DIR, filename);
 
     // Convert file to buffer
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    // Save to local storage (PRIMARY)
-    try {
-      await fs.writeFile(localPath, buffer);
-    } catch (writeError) {
-      logError(request, writeError, {
-        operation: 'write_bulletin_file',
-        path: localPath,
-        bufferSize: buffer.length
-      });
+    // Upload to Cloudinary (PRIMARY — serverless has no persistent disk)
+    if (!process.env.CLOUDINARY_CLOUD_NAME) {
       return NextResponse.json({
-        error: 'Failed to save bulletin file',
-        details: writeError.message
+        error: 'Cloudinary is not configured',
+        details: 'Set CLOUDINARY_CLOUD_NAME / CLOUDINARY_API_KEY / CLOUDINARY_API_SECRET'
       }, { status: 500 });
     }
 
-    // Upload to Cloudinary as backup (SECONDARY)
-    let cloudinaryUrl = null;
-    if (process.env.CLOUDINARY_CLOUD_NAME) {
-      try {
-        const result = await new Promise((resolve, reject) => {
-          cloudinary.uploader
-            .upload_stream(
-              {
-                folder: 'church-cms/bulletins',
-                resource_type: 'raw',
-                public_id: filename.replace('.pdf', ''),
-                format: 'pdf'
-              },
-              (error, result) => {
-                if (error) reject(error);
-                else resolve(result);
-              }
-            )
-            .end(buffer);
-        });
-        cloudinaryUrl = result.secure_url;
-      } catch (error) {
-        // Continue even if Cloudinary fails - we have local storage
-        logError(request, error, { operation: 'cloudinary_backup_bulletin', filename });
-      }
+    let cloudinaryUrl;
+    try {
+      const result = await new Promise((resolve, reject) => {
+        cloudinary.uploader
+          .upload_stream(
+            {
+              folder: 'church-cms/bulletins',
+              resource_type: 'raw',
+              public_id: filename.replace('.pdf', ''),
+              format: 'pdf'
+            },
+            (error, result) => {
+              if (error) reject(error);
+              else resolve(result);
+            }
+          )
+          .end(buffer);
+      });
+      cloudinaryUrl = result.secure_url;
+    } catch (error) {
+      logError(request, error, { operation: 'cloudinary_upload_bulletin', filename });
+      return NextResponse.json({
+        error: 'Failed to store bulletin file',
+        details: error.message
+      }, { status: 500 });
     }
 
     // Create database record
@@ -159,8 +134,8 @@ async function postHandler(request) {
       success: true,
       bulletin,
       storage: {
-        local: true,
-        cloudinary: !!cloudinaryUrl
+        local: false,
+        cloudinary: true
       }
     });
   } catch (error) {

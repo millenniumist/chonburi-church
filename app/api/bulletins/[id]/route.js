@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
-import { getBulletinById, checkLocalFile, getLocalFileStream } from '@/lib/bulletins';
+import { getBulletinById } from '@/lib/bulletins';
 import { withLogging, logError } from '@/lib/logger';
 
-// GET - Serve bulletin file (with fallback to Cloudinary)
+// GET - Serve bulletin file from Cloudinary
 async function getHandler(request, { params }) {
   try {
     const bulletin = await getBulletinById(params.id);
@@ -11,29 +11,6 @@ async function getHandler(request, { params }) {
       return NextResponse.json({ error: 'Bulletin not found' }, { status: 404 });
     }
 
-    // Try local file first (PRIMARY)
-    const hasLocalFile = await checkLocalFile(bulletin.localPath);
-
-    if (hasLocalFile) {
-      try {
-        const { stream, size } = await getLocalFileStream(bulletin.localPath);
-
-        // Return file stream
-        return new NextResponse(stream, {
-          headers: {
-            'Content-Type': 'application/pdf',
-            'Content-Length': size.toString(),
-            'Content-Disposition': `inline; filename="${bulletin.localPath}"`,
-            'Cache-Control': 'public, max-age=31536000, immutable',
-          },
-        });
-      } catch (error) {
-        logError(request, error, { operation: 'read_local_bulletin', bulletin_id: params.id });
-        // Fall through to Cloudinary backup
-      }
-    }
-
-    // Fallback to Cloudinary (BACKUP)
     if (bulletin.cloudinaryUrl) {
       return NextResponse.redirect(bulletin.cloudinaryUrl);
     }

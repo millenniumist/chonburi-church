@@ -81,3 +81,6 @@ pi-data-dump.json
 
 .gemini/
 gha-creds-*.json
+
+# site content snapshot must be committed (rendered by /ministries)
+!content/site-data.json
