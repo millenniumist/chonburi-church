@@ -154,9 +154,10 @@ export async function POST(req: Request) {
       const scripture = locScripture(r.scripture)
       const focusAreas = locPairs(r.focusAreas)
       const nextSteps = locPairs(r.nextSteps)
-      const doc = await createLocalized(
-        'missions',
-        {
+      const doc = await payload.create({
+        collection: 'missions',
+        locale: 'th',
+        data: {
           slug: r.slug,
           title: title.th,
           theme: theme.th,
@@ -170,26 +171,28 @@ export async function POST(req: Request) {
           pinned: r.pinned,
           startDate: r.startDate?.toISOString(),
           endDate: r.endDate?.toISOString(),
-        },
-        {
-          title: title.en,
-          theme: theme.en,
-          summary: summary.en,
-          description: description.en ? lexical(description.en) : undefined,
-          scripture: scripture.en,
-        },
-      )
-      // localized labels inside arrays need the created row ids
-      const enArrays: Record<string, unknown> = {}
-      const docAny = doc as never as { focusAreas?: { id: string }[]; nextSteps?: { id: string }[] }
-      if (focusAreas.some((p) => p.en) && docAny.focusAreas) {
-        enArrays.focusAreas = docAny.focusAreas.map((row, i) => ({ id: row.id, label: focusAreas[i].en || focusAreas[i].th }))
-      }
-      if (nextSteps.some((p) => p.en) && docAny.nextSteps) {
-        enArrays.nextSteps = docAny.nextSteps.map((row, i) => ({ id: row.id, label: nextSteps[i].en || nextSteps[i].th }))
-      }
-      if (Object.keys(enArrays).length) {
-        await payload.update({ collection: 'missions', id: doc.id, locale: 'en', data: enArrays as never })
+        } as never,
+      })
+      // Single en update: an en-locale save validates required array labels in
+      // en, so the arrays (with created row ids) must ride along with the text
+      const hasEn = [title, theme, summary, description, scripture].some((l) => l.en) ||
+        focusAreas.some((p) => p.en) || nextSteps.some((p) => p.en)
+      if (hasEn) {
+        const docAny = doc as never as { focusAreas?: { id: string }[]; nextSteps?: { id: string }[] }
+        await payload.update({
+          collection: 'missions',
+          id: doc.id,
+          locale: 'en',
+          data: {
+            title: title.en || title.th,
+            theme: theme.en,
+            summary: summary.en,
+            description: description.en ? lexical(description.en) : undefined,
+            scripture: scripture.en,
+            focusAreas: (docAny.focusAreas ?? []).map((row, i) => ({ id: row.id, label: focusAreas[i]?.en || focusAreas[i]?.th || '-' })),
+            nextSteps: (docAny.nextSteps ?? []).map((row, i) => ({ id: row.id, label: nextSteps[i]?.en || nextSteps[i]?.th || '-' })),
+          } as never,
+        })
       }
     }
     return rows.length
