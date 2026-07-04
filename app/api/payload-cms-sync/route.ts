@@ -20,22 +20,39 @@ const loc = (v: unknown): Localized => {
   return { th: v == null ? '' : String(v), en: '' }
 }
 
-const locList = (v: unknown): { th: string[]; en: string[] } => {
+// Normalize the wild stored shapes (plain th array | {th:[],en:[]} | array of
+// {th,en}) into aligned th/en row pairs, dropping rows empty in both locales
+// and falling back across locales so required labels are never blank.
+const locPairs = (v: unknown): Localized[] => {
+  let th: string[] = []
+  let en: string[] = []
   if (Array.isArray(v)) {
-    if (v.every((x) => typeof x === 'string')) return { th: v as string[], en: [] }
-    return {
-      th: v.map((x) => String(x?.th ?? '')).filter(Boolean),
-      en: v.map((x) => String(x?.en ?? '')),
+    if (v.every((x) => typeof x === 'string')) th = v as string[]
+    else {
+      th = v.map((x) => String(x?.th ?? ''))
+      en = v.map((x) => String(x?.en ?? ''))
     }
-  }
-  if (v && typeof v === 'object') {
+  } else if (v && typeof v === 'object') {
     const o = v as Record<string, unknown>
-    return {
-      th: Array.isArray(o.th) ? o.th.map(String) : [],
-      en: Array.isArray(o.en) ? o.en.map(String) : [],
-    }
+    th = Array.isArray(o.th) ? o.th.map(String) : []
+    en = Array.isArray(o.en) ? o.en.map(String) : []
   }
-  return { th: [], en: [] }
+  return Array.from({ length: Math.max(th.length, en.length) }, (_, i) => ({
+    th: th[i] || en[i] || '',
+    en: en[i] || '',
+  })).filter((p) => p.th)
+}
+
+// Stored scripture is { reference, text }, each side localized
+const locScripture = (v: unknown): Localized => {
+  if (!v || typeof v !== 'object') return { th: '', en: '' }
+  const o = v as Record<string, unknown>
+  const ref = loc(o.reference)
+  const text = loc(o.text)
+  return {
+    th: [ref.th, text.th].filter(Boolean).join('\n'),
+    en: [ref.en, text.en].filter(Boolean).join('\n'),
+  }
 }
 
 // Minimal Lexical document wrapping plain text (one paragraph per blank line)
@@ -134,9 +151,9 @@ export async function POST(req: Request) {
       const theme = loc(r.theme)
       const summary = loc(r.summary)
       const description = loc(r.description)
-      const scripture = loc(r.scripture)
-      const focusAreas = locList(r.focusAreas)
-      const nextSteps = locList(r.nextSteps)
+      const scripture = locScripture(r.scripture)
+      const focusAreas = locPairs(r.focusAreas)
+      const nextSteps = locPairs(r.nextSteps)
       const doc = await createLocalized(
         'missions',
         {
@@ -146,8 +163,8 @@ export async function POST(req: Request) {
           summary: summary.th,
           description: description.th ? lexical(description.th) : undefined,
           scripture: scripture.th,
-          focusAreas: focusAreas.th.map((label) => ({ label })),
-          nextSteps: nextSteps.th.map((label) => ({ label })),
+          focusAreas: focusAreas.map((p) => ({ label: p.th })),
+          nextSteps: nextSteps.map((p) => ({ label: p.th })),
           heroImageUrl: r.heroImageUrl ?? '',
           imageUrls: r.images.map((url) => ({ url })),
           pinned: r.pinned,
@@ -165,11 +182,11 @@ export async function POST(req: Request) {
       // localized labels inside arrays need the created row ids
       const enArrays: Record<string, unknown> = {}
       const docAny = doc as never as { focusAreas?: { id: string }[]; nextSteps?: { id: string }[] }
-      if (focusAreas.en.some(Boolean) && docAny.focusAreas) {
-        enArrays.focusAreas = docAny.focusAreas.map((row, i) => ({ id: row.id, label: focusAreas.en[i] || focusAreas.th[i] }))
+      if (focusAreas.some((p) => p.en) && docAny.focusAreas) {
+        enArrays.focusAreas = docAny.focusAreas.map((row, i) => ({ id: row.id, label: focusAreas[i].en || focusAreas[i].th }))
       }
-      if (nextSteps.en.some(Boolean) && docAny.nextSteps) {
-        enArrays.nextSteps = docAny.nextSteps.map((row, i) => ({ id: row.id, label: nextSteps.en[i] || nextSteps.th[i] }))
+      if (nextSteps.some((p) => p.en) && docAny.nextSteps) {
+        enArrays.nextSteps = docAny.nextSteps.map((row, i) => ({ id: row.id, label: nextSteps[i].en || nextSteps[i].th }))
       }
       if (Object.keys(enArrays).length) {
         await payload.update({ collection: 'missions', id: doc.id, locale: 'en', data: enArrays as never })
