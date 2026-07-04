@@ -8,7 +8,7 @@
     "dev:db:studio": "bash -c 'source .env && TZ=Asia/Bangkok DATABASE_URL=$DATABASE_URL_DEV npx prisma studio'",
     "db:sync": "node scripts/db-sync.mjs",
     "build": "TZ=Asia/Bangkok next build --webpack",
-    "vercel-build": "prisma generate && DATABASE_URL=\"${APP_DATABASE_URL:-$DATABASE_URL}\" DATABASE_URL_UNPOOLED=\"${APP_DATABASE_URL_UNPOOLED:-$DATABASE_URL_UNPOOLED}\" prisma migrate deploy && esbuild payload.config.ts --bundle --format=esm --platform=node --packages=external --outfile=payload.config.bundle.mjs && NODE_ENV=development PAYLOAD_DATABASE_URI=\"$DATABASE_URL_UNPOOLED\" node scripts/payload-push.mjs &&TZ=Asia/Bangkok next build --webpack",
+    "vercel-build": "prisma generate && node scripts/clear-migrate-lock.mjs && DATABASE_URL=\"${APP_DATABASE_URL:-$DATABASE_URL}\" DATABASE_URL_UNPOOLED=\"${APP_DATABASE_URL_UNPOOLED:-$DATABASE_URL_UNPOOLED}\" prisma migrate deploy && esbuild payload.config.ts --bundle --format=esm --platform=node --packages=external --outfile=payload.config.bundle.mjs && NODE_ENV=development PAYLOAD_DATABASE_URI=\"$DATABASE_URL_UNPOOLED\" node scripts/payload-push.mjs &&TZ=Asia/Bangkok next build --webpack",
     "start": "TZ=Asia/Bangkok next start",
     "lint": "eslint",
     "cleanup:financial": "node scripts/cleanupFinancialRecords.mjs",
