@@ -60,8 +60,21 @@ html[data-theme='dark'] {
   color-scheme: dark;
 }
 
+/* The site's root layout (app/layout.js) wraps the admin too, and its
+   Tailwind base paints body with the site's cream background. Repaint the
+   admin surfaces — this stylesheet only loads on (payload) routes. */
+html[data-theme='dark'] body {
+  background: var(--theme-bg) !important;
+  color: var(--theme-text) !important;
+}
+
 /* calmer chrome: flatten the nav/header onto the deep background */
 html[data-theme='dark'] {
+  .template-minimal,
+  .template-default {
+    background: var(--theme-bg);
+  }
+
   .nav,
   .template-default__nav {
     background: var(--theme-elevation-0);
