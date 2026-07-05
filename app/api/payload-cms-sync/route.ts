@@ -82,6 +82,11 @@ export async function POST(req: Request) {
   const payload = await getPayload({ config })
   const results: Record<string, number | string> = {}
 
+  // ?only=path-configs,category-settings limits the run — everything else is
+  // left untouched (a full run still wipe-and-recreates every collection)
+  const onlyParam = new URL(req.url).searchParams.get('only')
+  const only = onlyParam ? new Set(onlyParam.split(',').map((s) => s.trim())) : null
+
   const wipe = async (collection: string) => {
     await payload.delete({ collection: collection as never, where: { id: { exists: true } } })
   }
@@ -109,6 +114,7 @@ export async function POST(req: Request) {
   }
 
   const sync = async (name: string, fn: () => Promise<number>) => {
+    if (only && !only.has(name)) return
     try {
       results[name] = await fn()
     } catch (err) {
@@ -315,6 +321,30 @@ export async function POST(req: Request) {
           message: r.message,
           status: ['NEW', 'READ', 'ARCHIVED'].includes(r.status) ? r.status : 'NEW',
         } as never,
+      })
+    }
+    return rows.length
+  })
+
+  await sync('path-configs', async () => {
+    await wipe('path-configs')
+    const rows = await prisma.pathConfig.findMany()
+    for (const r of rows) {
+      await payload.create({
+        collection: 'path-configs',
+        data: { path: r.path, isEnabled: r.isEnabled } as never,
+      })
+    }
+    return rows.length
+  })
+
+  await sync('category-settings', async () => {
+    await wipe('category-settings')
+    const rows = await prisma.categorySettings.findMany()
+    for (const r of rows) {
+      await payload.create({
+        collection: 'category-settings',
+        data: { year: r.year, settings: r.settings ?? undefined } as never,
       })
     }
     return rows.length

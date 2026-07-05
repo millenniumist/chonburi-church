@@ -16,6 +16,8 @@ import { FutureProjects } from './collections/FutureProjects'
 import { FinancialRecords } from './collections/FinancialRecords'
 import { FinancialCategories } from './collections/FinancialCategories'
 import { Feedback } from './collections/Feedback'
+import { PathConfigs } from './collections/PathConfigs'
+import { CategorySettings } from './collections/CategorySettings'
 import { ContactInfo } from './globals/ContactInfo'
 
 const filename = fileURLToPath(import.meta.url)
@@ -50,6 +52,8 @@ export default buildConfig({
     FinancialRecords,
     FinancialCategories,
     Feedback,
+    PathConfigs,
+    CategorySettings,
   ],
   globals: [ContactInfo],
   editor: lexicalEditor(),
