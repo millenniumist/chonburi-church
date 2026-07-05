@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { getPayloadClient } from '@/lib/payload-cms';
 import { withLogging, logError } from '@/lib/logger';
 
 const CACHE_HEADERS = {
@@ -13,9 +13,13 @@ async function getHandler(request) {
   const year = yearParam ? Number.parseInt(yearParam, 10) : new Date().getFullYear();
 
   try {
-    const settings = await prisma.categorySettings.findUnique({
-      where: { year },
+    const payload = await getPayloadClient();
+    const { docs } = await payload.find({
+      collection: 'category-settings',
+      where: { year: { equals: year } },
+      limit: 1,
     });
+    const settings = docs[0];
 
     if (settings) {
       return NextResponse.json(settings.settings, {
@@ -45,144 +49,4 @@ async function getHandler(request) {
   }
 }
 
-// POST - Save category settings
-async function postHandler(request) {
-  try {
-    const body = await request.json();
-    const year = body?.year ? Number.parseInt(body.year, 10) : new Date().getFullYear();
-    const settings = body?.settings;
-
-    if (!settings) {
-      return NextResponse.json(
-        { error: 'Settings data is required' },
-        { status: 400, headers: CACHE_HEADERS }
-      );
-    }
-
-    // Upsert the settings
-    const result = await prisma.categorySettings.upsert({
-      where: { year },
-      create: {
-        year,
-        settings,
-      },
-      update: {
-        settings,
-      },
-    });
-
-    return NextResponse.json(
-      {
-        success: true,
-        message: 'Settings saved successfully',
-        year,
-      },
-      {
-        headers: CACHE_HEADERS,
-      }
-    );
-  } catch (error) {
-    logError(request, error, { operation: 'save_category_settings' });
-    return NextResponse.json(
-      { error: 'Unable to save category settings', details: error.message },
-      {
-        status: 500,
-        headers: CACHE_HEADERS,
-      }
-    );
-  }
-}
-
-// PUT - Update individual category
-async function putHandler(request) {
-  try {
-    const body = await request.json();
-    const { code, visible, aggregateInto } = body;
-
-    if (!code) {
-      return NextResponse.json(
-        { error: 'Category code is required' },
-        { status: 400, headers: CACHE_HEADERS }
-      );
-    }
-
-    // Update the category
-    const category = await prisma.financialCategory.update({
-      where: { code },
-      data: {
-        ...(typeof visible !== 'undefined' && { visible }),
-        ...(aggregateInto !== undefined && { aggregateInto }),
-      },
-    });
-
-    return NextResponse.json(
-      {
-        success: true,
-        message: 'Category updated successfully',
-        category,
-      },
-      {
-        headers: CACHE_HEADERS,
-      }
-    );
-  } catch (error) {
-    logError(request, error, { operation: 'update_category', category_code: body?.code });
-    return NextResponse.json(
-      { error: 'Unable to update category', details: error.message },
-      {
-        status: 500,
-        headers: CACHE_HEADERS,
-      }
-    );
-  }
-}
-
-// DELETE - Reset category settings
-async function deleteHandler(request) {
-  const { searchParams } = new URL(request.url);
-  const yearParam = searchParams.get('year');
-  const year = yearParam ? Number.parseInt(yearParam, 10) : new Date().getFullYear();
-
-  try {
-    await prisma.categorySettings.delete({
-      where: { year },
-    });
-
-    return NextResponse.json(
-      {
-        success: true,
-        message: 'Settings reset successfully',
-      },
-      {
-        headers: CACHE_HEADERS,
-      }
-    );
-  } catch (error) {
-    // If settings don't exist, that's okay
-    if (error.code === 'P2025') {
-      return NextResponse.json(
-        {
-          success: true,
-          message: 'No settings to reset',
-        },
-        {
-          headers: CACHE_HEADERS,
-        }
-      );
-    }
-
-    logError(request, error, { operation: 'reset_category_settings', year });
-    return NextResponse.json(
-      { error: 'Unable to reset category settings', details: error.message },
-      {
-        status: 500,
-        headers: CACHE_HEADERS,
-      }
-    );
-  }
-}
-
 export const GET = withLogging(getHandler);
-export const POST = withLogging(postHandler);
-export const PUT = withLogging(putHandler);
-export const DELETE = withLogging(deleteHandler);

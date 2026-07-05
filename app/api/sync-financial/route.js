@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { getPayloadClient } from '@/lib/payload-cms';
 import { logger } from '@/lib/logger';
 import { fetchSheetData } from '@/lib/google-sheets';
 
@@ -208,7 +208,7 @@ function parseMonthlyData(rows) {
   return monthlyRecords;
 }
 
-async function syncCategories(rows, year) {
+async function syncCategories(payload, rows, year) {
   const { incomeCategories, expenseCategories } = extractCategories(rows);
 
   logger.info({
@@ -225,15 +225,19 @@ async function syncCategories(rows, year) {
     const categoryName = incomeCategories[i];
     const code = categoryName; // Use name as code for now
 
-    const existing = await prisma.financialCategory.findUnique({
-      where: { code }
+    const { docs: existingDocs } = await payload.find({
+      collection: 'financial-categories',
+      where: { code: { equals: code } },
+      limit: 1
     });
+    const existing = existingDocs[0];
 
     if (existing) {
       // Update if needed
       if (existing.name !== categoryName || existing.type !== 'income' || existing.order !== i) {
-        await prisma.financialCategory.update({
-          where: { code },
+        await payload.update({
+          collection: 'financial-categories',
+          id: existing.id,
           data: {
             name: categoryName,
             type: 'income',
@@ -245,7 +249,8 @@ async function syncCategories(rows, year) {
       }
     } else {
       // Create new category
-      await prisma.financialCategory.create({
+      await payload.create({
+        collection: 'financial-categories',
         data: {
           code,
           name: categoryName,
@@ -264,15 +269,19 @@ async function syncCategories(rows, year) {
     const categoryName = expenseCategories[i];
     const code = categoryName; // Use name as code for now
 
-    const existing = await prisma.financialCategory.findUnique({
-      where: { code }
+    const { docs: existingDocs } = await payload.find({
+      collection: 'financial-categories',
+      where: { code: { equals: code } },
+      limit: 1
     });
+    const existing = existingDocs[0];
 
     if (existing) {
       // Update if needed
       if (existing.name !== categoryName || existing.type !== 'expense' || existing.order !== i) {
-        await prisma.financialCategory.update({
-          where: { code },
+        await payload.update({
+          collection: 'financial-categories',
+          id: existing.id,
           data: {
             name: categoryName,
             type: 'expense',
@@ -284,7 +293,8 @@ async function syncCategories(rows, year) {
       }
     } else {
       // Create new category
-      await prisma.financialCategory.create({
+      await payload.create({
+        collection: 'financial-categories',
         data: {
           code,
           name: categoryName,
@@ -311,7 +321,7 @@ async function syncFinancialData(spreadsheetId = null) {
   // Fetch data from Google Sheets
   const targetId = spreadsheetId || process.env.GOOGLE_SHEETS_SPREADSHEET_ID;
   logger.info({ spreadsheetId: targetId }, 'Fetching data from Google Sheets');
-  
+
   const rows = await fetchSheetData('Monthly', 'AF:AZ', targetId);
   logger.info({ rowsCount: rows?.length || 0 }, 'Data fetched from Google Sheets');
 
@@ -321,8 +331,10 @@ async function syncFinancialData(spreadsheetId = null) {
   // Extract year from first record
   const year = monthlyRecords.length > 0 ? monthlyRecords[0].year : new Date().getFullYear();
 
+  const payload = await getPayloadClient();
+
   // Sync categories
-  const categoryResult = await syncCategories(rows, year);
+  const categoryResult = await syncCategories(payload, rows, year);
 
   // Sync to database
   let created = 0;
@@ -332,30 +344,17 @@ async function syncFinancialData(spreadsheetId = null) {
   logger.info({ recordsToProcess: monthlyRecords.length }, 'Starting database sync');
 
   for (const record of monthlyRecords) {
-    // Check if record exists for this month (UTC range to avoid timezone drift)
-    const { start, end } = getMonthBounds(record.year, record.monthIndex);
-    const existingRecords = await prisma.financialRecord.findMany({
-      where: {
-        date: {
-          gte: start,
-          lt: end
-        }
-      },
-      orderBy: { createdAt: 'asc' }
+    // Check if a record already exists for this month (exact date match on
+    // the UTC month start, same value the sync always writes)
+    const { start } = getMonthBounds(record.year, record.monthIndex);
+    const dateIso = start.toISOString();
+    const { docs: existingDocs } = await payload.find({
+      collection: 'financial-records',
+      where: { date: { equals: dateIso } },
+      limit: 1
     });
 
-    const existing = existingRecords[0];
-
-    if (existingRecords.length > 1) {
-      const duplicateIds = existingRecords.slice(1).map((item) => item.id);
-      await prisma.financialRecord.deleteMany({
-        where: { id: { in: duplicateIds } }
-      });
-      logger.warn({
-        date: record.date,
-        duplicateCount: duplicateIds.length
-      }, 'Removed duplicate financial records for month');
-    }
+    const existing = existingDocs[0];
 
     if (existing) {
       // Only update if data has changed
@@ -366,8 +365,9 @@ async function syncFinancialData(spreadsheetId = null) {
         JSON.stringify(existing.incomeDetails ?? []) !== JSON.stringify(record.incomeDetails ?? []) ||
         JSON.stringify(existing.expenseDetails ?? []) !== JSON.stringify(record.expenseDetails ?? [])
       ) {
-        await prisma.financialRecord.update({
-          where: { id: existing.id },
+        await payload.update({
+          collection: 'financial-records',
+          id: existing.id,
           data: {
             income: record.income,
             expenses: record.expenses,
@@ -375,7 +375,7 @@ async function syncFinancialData(spreadsheetId = null) {
             notes: record.notes,
             incomeDetails: record.incomeDetails,
             expenseDetails: record.expenseDetails,
-            date: start
+            date: dateIso
           }
         });
         updated++;
@@ -390,9 +390,10 @@ async function syncFinancialData(spreadsheetId = null) {
       }
     } else {
       // Create new record
-      await prisma.financialRecord.create({
+      await payload.create({
+        collection: 'financial-records',
         data: {
-          date: start,
+          date: dateIso,
           income: record.income,
           expenses: record.expenses,
           balance: record.balance,

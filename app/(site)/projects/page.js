@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { generateMetadata as genMetadata } from '@/lib/seo';
 import StickyNav from '@/components/landing/StickyNav';
-import { prisma } from '@/lib/prisma';
+import { getPayloadClient } from '@/lib/payload-cms';
 import ImageCarousel from '@/components/ImageCarousel';
 
 export const metadata = genMetadata({
@@ -22,28 +22,30 @@ function formatCurrency(amount) {
 }
 
 async function getProjects() {
-  // Fetch directly from database to avoid fetch issues
-  const projects = await prisma.futureProject.findMany({
-    where: { isActive: true },
-    orderBy: [
-      { priority: 'desc' },
-      { createdAt: 'asc' }
-    ]
+  // Fetch directly from the Payload CMS to avoid fetch issues
+  const payload = await getPayloadClient();
+  const { docs: projects } = await payload.find({
+    collection: 'future-projects',
+    locale: 'th',
+    fallbackLocale: 'th',
+    where: { isActive: { equals: true } },
+    sort: ['-priority', 'createdAt'],
+    limit: 100,
   });
 
   // Transform to match expected format
   return projects.map(project => ({
     id: project.id,
     name: project.name,
-    description: project.description,
-    goal: project.targetAmount,
-    current: project.currentAmount,
+    description: project.description ?? null,
+    goal: project.targetAmount ?? 0,
+    current: project.currentAmount ?? 0,
     percentage: project.targetAmount > 0
       ? Math.round((project.currentAmount / project.targetAmount) * 100)
       : 0,
-    priority: project.priority,
-    isActive: project.isActive,
-    images: Array.isArray(project.images) ? project.images : []
+    priority: project.priority ?? 0,
+    isActive: project.isActive ?? false,
+    images: (project.images ?? []).map(image => image.url)
   }));
 }
 

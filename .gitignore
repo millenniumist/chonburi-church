@@ -88,3 +88,4 @@ gha-creds-*.json
 
 # build artifact (vercel-build esbuild output)
 payload.config.bundle.mjs
+.gstack/

@@ -2,10 +2,11 @@ import { NextResponse } from 'next/server';
 import { getBulletinById } from '@/lib/bulletins';
 import { withLogging, logError } from '@/lib/logger';
 
-// GET - Serve bulletin file from Cloudinary
+// GET - Serve bulletin file from Cloudinary (URL read from the Payload CMS)
 async function getHandler(request, { params }) {
+  const { id } = await params;
   try {
-    const bulletin = await getBulletinById(params.id);
+    const bulletin = await getBulletinById(id);
 
     if (!bulletin || !bulletin.isActive) {
       return NextResponse.json({ error: 'Bulletin not found' }, { status: 404 });
@@ -21,7 +22,7 @@ async function getHandler(request, { params }) {
       { status: 404 }
     );
   } catch (error) {
-    logError(request, error, { operation: 'serve_bulletin', bulletin_id: params.id });
+    logError(request, error, { operation: 'serve_bulletin', bulletin_id: id });
     return NextResponse.json(
       { error: 'Failed to serve bulletin', details: error.message },
       { status: 500 }

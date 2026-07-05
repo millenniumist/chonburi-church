@@ -369,6 +369,7 @@ export async function POST(req: Request) {
         mapEmbedUrl: r.mapEmbedUrl ?? '',
         social: {
           facebook: social.facebook ?? '',
+          facebookLive: social.facebookLive ?? '',
           instagram: social.instagram ?? '',
           line: social.line ?? '',
           website: social.website ?? '',

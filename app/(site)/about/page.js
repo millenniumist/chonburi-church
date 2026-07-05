@@ -9,7 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { prisma } from '@/lib/prisma';
+import { getPayloadClient } from '@/lib/payload-cms';
 
 export const metadata = genMetadata({
   title: 'เกี่ยวกับเรา',
@@ -25,9 +25,21 @@ export default async function AboutPage() {
   let leaders = [];
   
   try {
-    leaders = await prisma.churchLeader.findMany({
-      orderBy: { order: 'asc' },
+    const payload = await getPayloadClient();
+    const { docs } = await payload.find({
+      collection: 'leaders',
+      locale: 'th',
+      fallbackLocale: 'th',
+      sort: 'order',
+      limit: 100,
     });
+    leaders = docs.map((leader) => ({
+      id: leader.id,
+      name: leader.name,
+      position: leader.position,
+      image: leader.imageUrl,
+      order: leader.order,
+    }));
   } catch (error) {
     console.warn('Database access skipped or failed:', error.message);
     // Fallback to empty leaders list

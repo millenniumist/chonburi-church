@@ -34,6 +34,7 @@ export const ContactInfo: GlobalConfig = {
       type: 'group',
       fields: [
         { name: 'facebook', type: 'text' },
+        { name: 'facebookLive', type: 'text' },
         { name: 'instagram', type: 'text' },
         { name: 'line', type: 'text' },
         { name: 'website', type: 'text' },

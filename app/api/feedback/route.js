@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { getPayloadClient } from '@/lib/payload-cms';
 import { withLogging, logError } from '@/lib/logger';
 
 async function postHandler(request) {
@@ -14,7 +14,9 @@ async function postHandler(request) {
       );
     }
 
-    const feedback = await prisma.feedback.create({
+    const payload = await getPayloadClient();
+    const feedback = await payload.create({
+      collection: 'feedback',
       data: {
         name,
         email: email || null,

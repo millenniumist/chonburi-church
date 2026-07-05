@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { getPayloadClient } from '@/lib/payload-cms';
 import { withLogging, logError } from '@/lib/logger';
 
 async function getHandler(request) {
@@ -7,28 +7,30 @@ async function getHandler(request) {
     const { searchParams } = new URL(request.url);
     const activeOnly = searchParams.get('active') === 'true';
 
-    // Fetch projects from database
-    const projects = await prisma.futureProject.findMany({
-      where: activeOnly ? { isActive: true } : undefined,
-      orderBy: [
-        { priority: 'desc' }, // Higher priority first
-        { createdAt: 'asc' }  // Then by creation date
-      ]
+    // Fetch projects from the Payload CMS
+    const payload = await getPayloadClient();
+    const { docs: projects } = await payload.find({
+      collection: 'future-projects',
+      locale: 'th',
+      fallbackLocale: 'th',
+      ...(activeOnly ? { where: { isActive: { equals: true } } } : {}),
+      sort: ['-priority', 'createdAt'], // Higher priority first, then by creation date
+      limit: 100,
     });
 
     // Transform to match the expected format for the frontend
     const formattedProjects = projects.map(project => ({
       id: project.id,
       name: project.name,
-      description: project.description,
-      goal: project.targetAmount,
-      current: project.currentAmount,
+      description: project.description ?? null,
+      goal: project.targetAmount ?? 0,
+      current: project.currentAmount ?? 0,
       percentage: project.targetAmount > 0
         ? Math.round((project.currentAmount / project.targetAmount) * 100)
         : 0,
-      priority: project.priority,
-      isActive: project.isActive,
-      images: Array.isArray(project.images) ? project.images : []
+      priority: project.priority ?? 0,
+      isActive: project.isActive ?? false,
+      images: (project.images ?? []).map(image => image.url)
     }));
 
     return NextResponse.json({

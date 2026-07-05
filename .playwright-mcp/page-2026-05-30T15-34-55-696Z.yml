@@ -1,0 +1,455 @@
+- generic [ref=e1]:
+  - link "Skip to content" [ref=e3] [cursor=pointer]:
+    - /url: "#main"
+  - generic [ref=e7]:
+    - generic [ref=e9]:
+      - navigation "Sidebar":
+        - generic:
+          - generic:
+            - generic:
+              - button "Open sidebar":
+                - img
+        - generic:
+          - generic:
+            - link "New chat":
+              - /url: /
+              - generic:
+                - img
+              - generic: New chat
+          - generic:
+            - button "Search chats":
+              - generic:
+                - img
+              - generic: Search chats
+          - generic:
+            - button "Recents":
+              - generic:
+                - img
+              - generic: Recents
+        - generic:
+          - generic:
+            - button "Open profile menu":
+              - generic:
+                - generic:
+                  - img "Profile image"
+      - generic [ref=e10]:
+        - heading "Chat history" [level=2] [ref=e11]
+        - generic [ref=e12]:
+          - navigation "Chat history" [ref=e13]:
+            - generic [ref=e16]:
+              - link "Home" [ref=e17] [cursor=pointer]:
+                - /url: /
+                - generic [ref=e18]: ChatGPT
+              - button "Close sidebar" [expanded] [ref=e20]:
+                - img [ref=e21]
+            - list [ref=e24]:
+              - listitem [ref=e25]:
+                - link "New chat Shift Command O" [ref=e138] [cursor=pointer]:
+                  - /url: /
+                  - generic [ref=e27]:
+                    - img [ref=e140]
+                    - generic [ref=e143]: New chat
+                  - generic [ref=e144]:
+                    - generic "Shift" [ref=e145]:
+                      - generic [ref=e146]: ⇧
+                    - generic "Command" [ref=e147]:
+                      - generic [ref=e148]: ⌘
+                    - generic [ref=e150]: O
+              - listitem [ref=e32]:
+                - button "Search chats Command K" [ref=e151] [cursor=pointer]:
+                  - generic [ref=e34]:
+                    - img [ref=e153]
+                    - generic [ref=e156]: Search chats
+                  - generic [ref=e157]:
+                    - generic "Command" [ref=e158]:
+                      - generic [ref=e159]: ⌘
+                    - generic [ref=e161]: K
+            - link "Library" [ref=e39] [cursor=pointer]:
+              - /url: /library
+              - img [ref=e41]
+              - generic [ref=e44]: Library
+            - link "Apps" [ref=e45] [cursor=pointer]:
+              - /url: /apps
+              - img [ref=e47]
+              - generic [ref=e50]: Apps
+            - link "Codex" [ref=e51] [cursor=pointer]:
+              - /url: /codex
+              - generic [ref=e52]:
+                - img [ref=e54]
+                - generic [ref=e57]: Codex
+              - img [ref=e59]
+            - generic [ref=e62] [cursor=pointer]:
+              - img [ref=e64]
+              - generic [ref=e67]: More
+            - generic [ref=e162]:
+              - button "GPTs" [expanded] [ref=e164] [cursor=pointer]:
+                - heading "GPTs" [level=2] [ref=e165]
+              - list [ref=e166]:
+                - listitem [ref=e167]:
+                  - 'link "Sparkle: The Storybook Maker" [ref=e168] [cursor=pointer]':
+                    - /url: /g/g-lWbrikz5t-sparkle-the-storybook-maker
+                    - generic [ref=e173]: "Sparkle: The Storybook Maker"
+                    - button [ref=e175]:
+                      - img [ref=e177]
+                - listitem [ref=e179]:
+                  - link "Storybook Generator" [ref=e180] [cursor=pointer]:
+                    - /url: /g/g-SlFN8bP1a-storybook-generator
+                    - generic [ref=e185]: Storybook Generator
+                    - button [ref=e187]:
+                      - img [ref=e189]
+                - listitem [ref=e191]:
+                  - link "AC Maker" [ref=e192] [cursor=pointer]:
+                    - /url: /g/g-694117f734bc8191aa8439120647a663-ac-maker
+                    - generic [ref=e193]:
+                      - img [ref=e195]
+                      - generic [ref=e198]: AC Maker
+                    - button [ref=e200]:
+                      - img [ref=e202]
+                - listitem [ref=e204]:
+                  - link "Monday" [ref=e205] [cursor=pointer]:
+                    - /url: /g/g-67ec3b4988f8819184c5454e18f5e84b-monday
+                    - generic [ref=e210]: Monday
+                    - button [ref=e212]:
+                      - img [ref=e214]
+              - link "Explore GPTs" [ref=e216] [cursor=pointer]:
+                - /url: /gpts
+                - img [ref=e218]
+                - generic [ref=e221]: Explore GPTs
+            - generic [ref=e222]:
+              - button "Projects" [expanded] [ref=e224] [cursor=pointer]:
+                - heading "Projects" [level=2] [ref=e225]
+              - list [ref=e226]:
+                - listitem [ref=e227]:
+                  - button "New project" [ref=e228] [cursor=pointer]:
+                    - img [ref=e230]
+                    - generic [ref=e233]: New project
+                - listitem [ref=e234]:
+                  - link "Show chats coding Open project options for coding" [ref=e235] [cursor=pointer]:
+                    - /url: /g/g-p-693a35d678fc81919c486e18930b2702-coding/project
+                    - generic [ref=e236]:
+                      - button "Show chats" [ref=e238]:
+                        - generic [ref=e239]:
+                          - img [ref=e243]
+                          - img [ref=e253]
+                      - generic [ref=e256]: coding
+                    - button "Open project options for coding" [ref=e258]:
+                      - img [ref=e260]
+                - listitem [ref=e262]:
+                  - link "Default color, black in light mode, white in dark mode Music Music Open project options for Music" [ref=e263] [cursor=pointer]:
+                    - /url: /g/g-p-6965b10fac248191bb6394a35676bdfc-music/project
+                    - generic [ref=e264]:
+                      - img "Default color, black in light mode, white in dark mode Music" [ref=e267]
+                      - generic [ref=e270]: Music
+                    - button "Open project options for Music" [ref=e272]:
+                      - img [ref=e274]
+                - listitem [ref=e276]:
+                  - link "Yellow Plane Travel Open project options for Travel" [ref=e277] [cursor=pointer]:
+                    - /url: /g/g-p-6965b0ff381c8191a84bca2ce8ef3cf6-travel/project
+                    - generic [ref=e278]:
+                      - img "Yellow Plane" [ref=e281]
+                      - generic [ref=e284]: Travel
+                    - button "Open project options for Travel" [ref=e286]:
+                      - img [ref=e288]
+                - listitem [ref=e290]:
+                  - link "Purple Writing Writing Open project options for Writing" [ref=e291] [cursor=pointer]:
+                    - /url: /g/g-p-6965b0f55e6481918b2316da63abf573-writing/project
+                    - generic [ref=e292]:
+                      - img "Purple Writing" [ref=e295]
+                      - generic [ref=e298]: Writing
+                    - button "Open project options for Writing" [ref=e300]:
+                      - img [ref=e302]
+                - listitem [ref=e304]:
+                  - link "Blue Graduation Cap Homework Open project options for Homework" [ref=e305] [cursor=pointer]:
+                    - /url: /g/g-p-6965b0ec645c8191ae4186b3fcea6465-homework/project
+                    - generic [ref=e306]:
+                      - img "Blue Graduation Cap" [ref=e309]
+                      - generic [ref=e312]: Homework
+                    - button "Open project options for Homework" [ref=e314]:
+                      - img [ref=e316]
+                - listitem [ref=e318]:
+                  - generic [ref=e319] [cursor=pointer]:
+                    - img [ref=e321]
+                    - generic [ref=e324]: More
+            - generic [ref=e325]:
+              - button "Recents" [expanded] [ref=e327] [cursor=pointer]:
+                - heading "Recents" [level=2] [ref=e328]
+              - generic [ref=e329]:
+                - list [ref=e330]:
+                  - listitem [ref=e331]:
+                    - link "Moses ESL Pairing Game, pinned conversation" [ref=e332] [cursor=pointer]:
+                      - /url: /c/69f31a25-63ac-839e-9e2a-16b8cbd3b17f
+                      - generic [ref=e334]: Moses ESL Pairing Game
+                      - generic [ref=e335]:
+                        - generic [ref=e337]:
+                          - img [ref=e339]
+                          - button "Open conversation options for Moses ESL Pairing Game" [ref=e341]:
+                            - img [ref=e343]
+                        - img [ref=e347]
+                  - listitem [ref=e349]:
+                    - link "Automated Noodle Vending Plan, pinned conversation" [ref=e350] [cursor=pointer]:
+                      - /url: /c/69f342c0-e3f0-83a1-a0ee-2000942fadb5
+                      - generic "Automated Noodle Vending Plan" [ref=e352]
+                      - generic [ref=e353]:
+                        - generic [ref=e355]:
+                          - img [ref=e357]
+                          - button "Open conversation options for Automated Noodle Vending Plan" [ref=e359]:
+                            - img [ref=e361]
+                        - img [ref=e365]
+                  - listitem [ref=e367]:
+                    - link "ESL Lesson Plan TPR, pinned conversation" [ref=e368] [cursor=pointer]:
+                      - /url: /c/6a0dc752-6720-839f-a0e2-5fa376a97c7a
+                      - generic [ref=e370]: ESL Lesson Plan TPR
+                      - generic [ref=e371]:
+                        - generic [ref=e373]:
+                          - img [ref=e375]
+                          - button "Open conversation options for ESL Lesson Plan TPR" [ref=e377]:
+                            - img [ref=e379]
+                        - img [ref=e383]
+                - list [ref=e385]:
+                  - listitem [ref=e740]:
+                    - link "Minimalist Coffee Photograph" [ref=e741] [cursor=pointer]:
+                      - /url: /c/6a1b0378-6040-83ec-bde0-b4dd7caad5ec
+                      - generic [ref=e743]: Minimalist Coffee Photograph
+                      - button "Open conversation options for Minimalist Coffee Photograph" [ref=e746]:
+                        - img [ref=e748]
+                  - listitem [ref=e386]:
+                    - link "Thai Church Image Request" [ref=e387] [cursor=pointer]:
+                      - /url: /c/6a1b02eb-d82c-83ec-b57d-e66ea9b211da
+                      - generic [ref=e389]: Thai Church Image Request
+                      - generic [ref=e390]:
+                        - button "Open conversation options for Thai Church Image Request" [ref=e393]:
+                          - img [ref=e395]
+                        - img [ref=e398]
+                  - listitem [ref=e401]:
+                    - 'link "Image Request: Coffee Scene" [ref=e402] [cursor=pointer]':
+                      - /url: /c/6a1b0274-4964-83ec-ae9c-43f306bfb4d1
+                      - generic [ref=e404]: "Image Request: Coffee Scene"
+                      - 'button "Open conversation options for Image Request: Coffee Scene" [ref=e407]':
+                        - img [ref=e409]
+                  - listitem [ref=e411]:
+                    - link "Image generation request" [ref=e412] [cursor=pointer]:
+                      - /url: /c/6a1b018a-1f80-83ec-a252-2fb38ca47fa2
+                      - generic [ref=e414]: Image generation request
+                      - button "Open conversation options for Image generation request" [ref=e417]:
+                        - img [ref=e419]
+                  - listitem [ref=e421]:
+                    - link "Church Website Design Plan" [ref=e422] [cursor=pointer]:
+                      - /url: /c/6a1af813-44a4-83ec-af6e-f50a4cbab0e8
+                      - generic [ref=e424]: Church Website Design Plan
+                      - button "Open conversation options for Church Website Design Plan" [ref=e427]:
+                        - img [ref=e429]
+                  - listitem [ref=e431]:
+                    - link "MacBook Pro M5 Swap Performance" [ref=e432] [cursor=pointer]:
+                      - /url: /c/6a17aff0-0fc8-83ec-96bc-3c805a8c87ae
+                      - generic "MacBook Pro M5 Swap Performance" [ref=e434]
+                      - button "Open conversation options for MacBook Pro M5 Swap Performance" [ref=e437]:
+                        - img [ref=e439]
+                  - listitem [ref=e441]:
+                    - link "ESL Image Task" [ref=e442] [cursor=pointer]:
+                      - /url: /c/6a19af15-e52c-83ec-b9eb-f9c73f166cea
+                      - generic [ref=e444]: ESL Image Task
+                      - button "Open conversation options for ESL Image Task" [ref=e447]:
+                        - img [ref=e449]
+                  - listitem [ref=e451]:
+                    - link "Hell and Separation from God" [ref=e452] [cursor=pointer]:
+                      - /url: /c/6a198344-60e8-83ec-b12e-ad08b3681f1c
+                      - generic [ref=e454]: Hell and Separation from God
+                      - button "Open conversation options for Hell and Separation from God" [ref=e457]:
+                        - img [ref=e459]
+                  - listitem [ref=e461]:
+                    - link "Raw Salmon and Kids" [ref=e462] [cursor=pointer]:
+                      - /url: /c/6a197632-2180-83ec-88f5-5b68ff8c16bb
+                      - generic [ref=e464]: Raw Salmon and Kids
+                      - button "Open conversation options for Raw Salmon and Kids" [ref=e467]:
+                        - img [ref=e469]
+                  - listitem [ref=e471]:
+                    - link "回覆確認" [ref=e472] [cursor=pointer]:
+                      - /url: /c/6a196a53-bc9c-83ec-8f01-972334302624
+                      - generic [ref=e474]: 回覆確認
+                      - button "Open conversation options for 回覆確認" [ref=e477]:
+                        - img [ref=e479]
+                  - listitem [ref=e481]:
+                    - link "Call it a day meaning" [ref=e482] [cursor=pointer]:
+                      - /url: /c/6a18e238-0cd4-83ec-a46a-e1089cdae64a
+                      - generic [ref=e484]: Call it a day meaning
+                      - button "Open conversation options for Call it a day meaning" [ref=e487]:
+                        - img [ref=e489]
+                  - listitem [ref=e491]:
+                    - link "Key Skills for AI Era" [ref=e492] [cursor=pointer]:
+                      - /url: /c/6a18656b-d638-83ec-b9f6-26a31d467e65
+                      - generic [ref=e494]: Key Skills for AI Era
+                      - button "Open conversation options for Key Skills for AI Era" [ref=e497]:
+                        - img [ref=e499]
+                  - listitem [ref=e501]:
+                    - link "AC Compressor Myths" [ref=e502] [cursor=pointer]:
+                      - /url: /c/6a1795bc-778c-83ec-adb7-f148b4e18390
+                      - generic [ref=e504]: AC Compressor Myths
+                      - button "Open conversation options for AC Compressor Myths" [ref=e507]:
+                        - img [ref=e509]
+                  - listitem [ref=e511]:
+                    - link "Using v2+ v2 in English" [ref=e512] [cursor=pointer]:
+                      - /url: /c/6a170664-dcb0-83ec-a68f-595ee0f55876
+                      - generic [ref=e514]: Using v2+ v2 in English
+                      - button "Open conversation options for Using v2+ v2 in English" [ref=e517]:
+                        - img [ref=e519]
+                  - listitem [ref=e521]:
+                    - link "การทำให้ข้อความมนุษย์มากขึ้น" [ref=e522] [cursor=pointer]:
+                      - /url: /c/6a16930d-ac04-83ec-885d-156ed901ff00
+                      - generic [ref=e524]: การทำให้ข้อความมนุษย์มากขึ้น
+                      - button "Open conversation options for การทำให้ข้อความมนุษย์มากขึ้น" [ref=e527]:
+                        - img [ref=e529]
+                  - listitem [ref=e531]:
+                    - link "Funny Sarcasm Image Request" [ref=e532] [cursor=pointer]:
+                      - /url: /c/6a154b1a-5710-83ec-b2c6-34ce4d17c36c
+                      - generic [ref=e534]: Funny Sarcasm Image Request
+                      - button "Open conversation options for Funny Sarcasm Image Request" [ref=e537]:
+                        - img [ref=e539]
+                  - listitem [ref=e541]:
+                    - link "Opus 4.7 Docs Strengths" [ref=e542] [cursor=pointer]:
+                      - /url: /c/6a131df5-6fb0-83ec-8bd7-9c47abc7c103
+                      - generic [ref=e544]: Opus 4.7 Docs Strengths
+                      - button "Open conversation options for Opus 4.7 Docs Strengths" [ref=e547]:
+                        - img [ref=e549]
+                  - listitem [ref=e551]:
+                    - link "OnePlus 120W Charger MacBook" [ref=e552] [cursor=pointer]:
+                      - /url: /c/6a108fb8-3f94-83ec-a145-91aa012d909d
+                      - generic [ref=e554]: OnePlus 120W Charger MacBook
+                      - button "Open conversation options for OnePlus 120W Charger MacBook" [ref=e557]:
+                        - img [ref=e559]
+                  - listitem [ref=e561]:
+                    - link "Learning Path Overview" [ref=e562] [cursor=pointer]:
+                      - /url: /c/6a1084ac-c368-83ec-896b-f18ebf300d46
+                      - generic [ref=e564]: Learning Path Overview
+                      - button "Open conversation options for Learning Path Overview" [ref=e567]:
+                        - img [ref=e569]
+                  - listitem [ref=e571]:
+                    - link "TPR Storytelling David" [ref=e572] [cursor=pointer]:
+                      - /url: /c/6a0f1cf2-7d3c-83ec-b9ec-c8a1418c5048
+                      - generic [ref=e574]: TPR Storytelling David
+                      - button "Open conversation options for TPR Storytelling David" [ref=e577]:
+                        - img [ref=e579]
+                  - listitem [ref=e581]:
+                    - link "Sticky rice protein content" [ref=e582] [cursor=pointer]:
+                      - /url: /c/6a104e00-a61c-83ec-9696-2524473a4cf2
+                      - generic [ref=e584]: Sticky rice protein content
+                      - button "Open conversation options for Sticky rice protein content" [ref=e587]:
+                        - img [ref=e589]
+                  - listitem [ref=e591]:
+                    - link "Battery Charging Best Practices" [ref=e592] [cursor=pointer]:
+                      - /url: /c/6a101f84-ce20-83ec-ac7e-b6e9222b0461
+                      - generic [ref=e594]: Battery Charging Best Practices
+                      - button "Open conversation options for Battery Charging Best Practices" [ref=e597]:
+                        - img [ref=e599]
+                  - listitem [ref=e601]:
+                    - link "Jitsulife Stroller Fan Filter" [ref=e602] [cursor=pointer]:
+                      - /url: /c/6a0fab87-83b8-83ec-88c8-6656cdfebe5e
+                      - generic [ref=e604]: Jitsulife Stroller Fan Filter
+                      - button "Open conversation options for Jitsulife Stroller Fan Filter" [ref=e607]:
+                        - img [ref=e609]
+                  - listitem [ref=e611]:
+                    - link "Flashcards for Kids" [ref=e612] [cursor=pointer]:
+                      - /url: /c/6a0f2006-be94-83ec-99ec-ba5b8b163d58
+                      - generic [ref=e614]: Flashcards for Kids
+                      - button "Open conversation options for Flashcards for Kids" [ref=e617]:
+                        - img [ref=e619]
+                  - listitem [ref=e621]:
+                    - link "Battery Health Tips" [ref=e622] [cursor=pointer]:
+                      - /url: /c/6a0ddebe-5a34-83ec-a376-c3c0426b160d
+                      - generic [ref=e624]: Battery Health Tips
+                      - button "Open conversation options for Battery Health Tips" [ref=e627]:
+                        - img [ref=e629]
+                  - listitem [ref=e631]:
+                    - link "Fake Thai National IDs" [ref=e632] [cursor=pointer]:
+                      - /url: /c/6a0c3edd-51f0-83ec-9f81-32f1dee106d8
+                      - generic [ref=e634]: Fake Thai National IDs
+                      - button "Open conversation options for Fake Thai National IDs" [ref=e637]:
+                        - img [ref=e639]
+                  - listitem [ref=e641]:
+                    - link "Handling Flashy Icons" [ref=e642] [cursor=pointer]:
+                      - /url: /c/6a0c02c6-56a0-83ec-8562-ebd87f62f5a4
+                      - generic [ref=e644]: Handling Flashy Icons
+                      - button "Open conversation options for Handling Flashy Icons" [ref=e647]:
+                        - img [ref=e649]
+                  - listitem [ref=e651]:
+                    - link "OnePlus 15 Bluetooth Issue" [ref=e652] [cursor=pointer]:
+                      - /url: /c/6a0ba5e1-c5f4-83ec-ace4-fec97b74b316
+                      - generic [ref=e654]: OnePlus 15 Bluetooth Issue
+                      - button "Open conversation options for OnePlus 15 Bluetooth Issue" [ref=e657]:
+                        - img [ref=e659]
+          - button "Suparit Pantasanyakul Plus, open profile menu" [ref=e71] [cursor=pointer]:
+            - generic [ref=e72]:
+              - img "Profile image" [ref=e671]
+              - generic [ref=e75]:
+                - generic [ref=e77]: Suparit Pantasanyakul
+                - generic [ref=e80]: Plus
+            - button "Download apps" [ref=e83]:
+              - img [ref=e85]
+    - generic [ref=e88]:
+      - generic [ref=e89]:
+        - banner:
+          - generic [ref=e92]:
+            - button "Share" [ref=e672] [cursor=pointer]:
+              - generic [ref=e673]:
+                - img [ref=e674]
+                - text: Share
+            - button "Open conversation options" [ref=e677] [cursor=pointer]:
+              - img [ref=e678]
+      - main [ref=e98]:
+        - generic [ref=e99]:
+          - generic [ref=e681]:
+            - generic [ref=e683]:
+              - heading "You said:" [level=4] [ref=e684]
+              - generic [ref=e686]:
+                - generic [ref=e694]: Generate an image in 4:3 aspect ratio. Minimal warm product photograph of a single plain ceramic cup of coffee with simple latte art, centered on a clean cream (#FBF8F3) surface, soft even daylight, lots of calm negative space, gentle warm shadow. Neutral and timeless so it suits any drink. Warm low-contrast grade, caramel highlights, subtle film grain, slightly top-down angle. No text, no price, no branding, no logo, no watermark.
+                - generic [ref=e695]:
+                  - group "Your message actions":
+                    - button "Copy message":
+                      - generic:
+                        - img
+                    - button "Edit message":
+                      - generic:
+                        - img
+            - generic [ref=e698]:
+              - heading "ChatGPT said:" [level=4] [ref=e699]
+              - generic [ref=e701]:
+                - button "Thinking Generating a more detailed image — hang tight." [ref=e704] [cursor=pointer]:
+                  - generic [ref=e705]:
+                    - generic [ref=e706]: Thinking
+                    - generic [ref=e707]: Generating a more detailed image — hang tight.
+                - generic [ref=e751]:
+                  - button "Generated image" [ref=e754] [cursor=pointer]:
+                    - generic: Preview
+                    - generic [ref=e755]:
+                      - img "Generated image" [ref=e757]
+                      - img [ref=e759]
+                      - img [ref=e761]
+                  - button "Generated image Generated image Generated image" [ref=e765] [cursor=pointer]:
+                    - generic [ref=e769]:
+                      - img "Generated image" [ref=e771]
+                      - img "Generated image" [ref=e773]
+                      - img "Generated image" [ref=e775]
+                - generic [ref=e776]:
+                  - group "Response actions"
+          - generic [ref=e111]:
+            - button [ref=e716] [cursor=pointer]:
+              - img [ref=e717]
+            - generic [ref=e117]:
+              - generic [ref=e121]:
+                - button "Add files and more" [ref=e124] [cursor=pointer]:
+                  - img
+                - textbox "Chat with ChatGPT" [active] [ref=e723]:
+                  - paragraph [ref=e724]: Ask anything
+                - generic [ref=e128]:
+                  - button "Extended" [ref=e728] [cursor=pointer]:
+                    - generic [ref=e729]: Extended
+                    - img
+                  - generic [ref=e129]:
+                    - button "Start dictation" [ref=e730] [cursor=pointer]:
+                      - img
+                    - button "Stop answering" [ref=e777] [cursor=pointer]:
+                      - img [ref=e778]
+              - button [ref=e134]
+              - button [ref=e135]
+            - generic [ref=e739]: ChatGPT can make mistakes. Check important info.
+  - alert [ref=e136]
+  - status [ref=e137]
