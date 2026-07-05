@@ -19,6 +19,7 @@ import { Feedback } from './collections/Feedback'
 import { PathConfigs } from './collections/PathConfigs'
 import { CategorySettings } from './collections/CategorySettings'
 import { ContactInfo } from './globals/ContactInfo'
+import { LandingPage } from './globals/LandingPage'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -55,7 +56,7 @@ export default buildConfig({
     PathConfigs,
     CategorySettings,
   ],
-  globals: [ContactInfo],
+  globals: [ContactInfo, LandingPage],
   editor: lexicalEditor(),
   localization: {
     locales: ['th', 'en'],

@@ -15,6 +15,7 @@ const DEFAULT_NAV_ITEMS = [
 ];
 
 const DEFAULT_CONTENT = {
+  brand: "คริสตจักรชลบุรี",
   title: "ยินดีต้อนรับสู่คริสตจักรชลบุรี",
   tagline: "ร่วมนำข่าวประเสริฐสู่ชุมชนของเรา",
   description:
@@ -23,6 +24,9 @@ const DEFAULT_CONTENT = {
     label: "ติดต่อเรา",
     href: "/contact",
   },
+  imageUrl: "/images/landing-hero.png",
+  imageAlt: "Congregation worship service inside a modern church",
+  socialHeading: "ติดตามถ่ายทอดสดและกิจกรรมล่าสุด",
 };
 
 export default function LandingHero() {
@@ -63,19 +67,23 @@ export default function LandingHero() {
 
     async function loadContent() {
       try {
-        const res = await fetch("/api/page-content/landing?section=hero");
+        const res = await fetch("/api/landing?locale=th");
         if (!res.ok) return;
         const data = await res.json();
-        const section = data?.sections?.[0];
-        if (!cancelled && section) {
+        const hero = data?.hero;
+        if (!cancelled && hero) {
           setContent({
-            title: section.title ?? DEFAULT_CONTENT.title,
-            tagline: section.body?.tagline ?? DEFAULT_CONTENT.tagline,
-            description: section.description ?? DEFAULT_CONTENT.description,
+            brand: hero.brand || DEFAULT_CONTENT.brand,
+            title: hero.title || DEFAULT_CONTENT.title,
+            tagline: hero.tagline || DEFAULT_CONTENT.tagline,
+            description: hero.description || DEFAULT_CONTENT.description,
             cta: {
-              label: section.body?.cta?.label ?? DEFAULT_CONTENT.cta.label,
-              href: section.body?.cta?.href ?? DEFAULT_CONTENT.cta.href,
+              label: hero.ctaLabel || DEFAULT_CONTENT.cta.label,
+              href: hero.ctaHref || DEFAULT_CONTENT.cta.href,
             },
+            imageUrl: hero.imageUrl || DEFAULT_CONTENT.imageUrl,
+            imageAlt: hero.imageAlt || DEFAULT_CONTENT.imageAlt,
+            socialHeading: hero.socialHeading || DEFAULT_CONTENT.socialHeading,
           });
         }
       } catch (error) {
@@ -160,7 +168,7 @@ export default function LandingHero() {
             href="/"
             className="text-white text-sm sm:text-base uppercase tracking-wide font-semibold drop-shadow-md"
           >
-            คริสตจักรชลบุรี
+            {content.brand}
           </Link>
           <nav className="hidden md:flex gap-8">
             {navItems.map((item) => (
@@ -223,13 +231,21 @@ export default function LandingHero() {
 
       {/* Hero Content with Parallax */}
       <motion.div ref={container} style={{ y }} className="relative min-h-screen">
-        <Image
-          src="/images/landing-hero.png"
-          fill
-          alt="Congregation worship service inside a modern church"
-          className={`object-cover ${colorTheme === 'bw' ? 'filter grayscale' : ''}`}
-          priority
-        />
+        {content.imageUrl.startsWith("/") ? (
+          <Image
+            src={content.imageUrl}
+            fill
+            alt={content.imageAlt}
+            className={`object-cover ${colorTheme === 'bw' ? 'filter grayscale' : ''}`}
+            priority
+          />
+        ) : (
+          <img
+            src={content.imageUrl}
+            alt={content.imageAlt}
+            className={`absolute inset-0 w-full h-full object-cover ${colorTheme === 'bw' ? 'filter grayscale' : ''}`}
+          />
+        )}
         <div className="absolute inset-0 bg-black/40" />
         <div className="absolute inset-0 flex items-start justify-start z-10 pt-24 md:pt-32">
           <div className="text-left text-white max-w-3xl px-6">
@@ -338,7 +354,7 @@ export default function LandingHero() {
                   `}</style>
                   <p className="text-white/95 font-bold text-xl mb-6 flex items-center gap-3">
                     <span className="h-0.5 w-8 bg-primary rounded-full" />
-                    ติดตามถ่ายทอดสดและกิจกรรมล่าสุด
+                    {content.socialHeading}
                   </p>
                   <div className="flex gap-4">
                     {socialLinks.facebook && (

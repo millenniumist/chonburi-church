@@ -19,6 +19,10 @@ const DEFAULT_CONTENT = {
     label: "ดูตารางกิจกรรม",
     href: "/worship",
   },
+  image: {
+    src: "/images/landing-featured.png",
+    alt: "Exterior of a church building with cross signage",
+  },
 };
 
 export default function LandingFeatured() {
@@ -30,19 +34,26 @@ export default function LandingFeatured() {
 
     async function loadContent() {
       try {
-        const res = await fetch("/api/page-content/landing?section=featured");
+        const res = await fetch("/api/landing?locale=th");
         if (!res.ok) return;
         const data = await res.json();
-        const section = data?.sections?.[0];
-        if (!cancelled && section) {
+        const featured = data?.featured;
+        if (!cancelled && featured) {
+          const bullets = Array.isArray(featured.bullets)
+            ? featured.bullets.map((bullet) => bullet?.text).filter(Boolean)
+            : [];
           setContent({
-            subtitle: section.subtitle ?? DEFAULT_CONTENT.subtitle,
-            title: section.title ?? DEFAULT_CONTENT.title,
-            description: section.description ?? DEFAULT_CONTENT.description,
-            bullets: Array.isArray(section.body?.bullets) ? section.body.bullets : DEFAULT_CONTENT.bullets,
+            subtitle: featured.subtitle || DEFAULT_CONTENT.subtitle,
+            title: featured.title || DEFAULT_CONTENT.title,
+            description: featured.description || DEFAULT_CONTENT.description,
+            bullets: bullets.length ? bullets : DEFAULT_CONTENT.bullets,
             cta: {
-              label: section.body?.cta?.label ?? DEFAULT_CONTENT.cta.label,
-              href: section.body?.cta?.href ?? DEFAULT_CONTENT.cta.href,
+              label: featured.ctaLabel || DEFAULT_CONTENT.cta.label,
+              href: featured.ctaHref || DEFAULT_CONTENT.cta.href,
+            },
+            image: {
+              src: featured.imageUrl || DEFAULT_CONTENT.image.src,
+              alt: featured.imageAlt || DEFAULT_CONTENT.image.alt,
             },
           });
         }
@@ -63,13 +74,21 @@ export default function LandingFeatured() {
     <section className="px-6 py-12 bg-background">
       <div className="max-w-6xl mx-auto grid gap-10 lg:grid-cols-2 lg:gap-16 items-center">
         <div className="relative h-[320px] sm:h-[420px] lg:h-[500px] w-full overflow-hidden rounded-3xl shadow-xl">
-          <Image
-            src="/images/landing-featured.png"
-            alt="Exterior of a church building with cross signage"
-            fill
-            className={`object-cover ${colorTheme === 'bw' ? 'filter grayscale' : ''}`}
-            priority
-          />
+          {content.image.src.startsWith("/") ? (
+            <Image
+              src={content.image.src}
+              alt={content.image.alt}
+              fill
+              className={`object-cover ${colorTheme === 'bw' ? 'filter grayscale' : ''}`}
+              priority
+            />
+          ) : (
+            <img
+              src={content.image.src}
+              alt={content.image.alt}
+              className={`absolute inset-0 h-full w-full object-cover ${colorTheme === 'bw' ? 'filter grayscale' : ''}`}
+            />
+          )}
         </div>
 
         <div className="space-y-6 text-left">
