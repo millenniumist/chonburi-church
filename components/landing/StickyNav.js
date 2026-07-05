@@ -15,7 +15,7 @@ const DEFAULT_NAV_ITEMS = [
 ];
 
 export default function StickyNav() {
-  const [isVisible, setIsVisible] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
   const [menuOpen, setMenuOpen] = useState(false);
   const [navItems, setNavItems] = useState(DEFAULT_NAV_ITEMS);
 
@@ -117,11 +117,11 @@ export default function StickyNav() {
     <AnimatePresence>
       {isVisible && (
         <motion.nav
-          initial={{ y: -100, opacity: 0 }}
+          initial={false}
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: -100, opacity: 0 }}
           transition={{ duration: 0.3 }}
-          className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-md border-b border-border/50"
+          className="fixed top-0 left-0 right-0 z-50 bg-background border-b border-border/50"
         >
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center h-12">
@@ -173,25 +173,31 @@ export default function StickyNav() {
                 ))}
               </div>
             </div>
-            <div
-              id="sticky-mobile-nav"
-              className={`md:hidden overflow-hidden transition-[max-height,opacity] duration-300 ease-in-out ${
-                menuOpen ? 'max-h-96 opacity-100 pb-3' : 'max-h-0 opacity-0'
-              }`}
-            >
-              <div className="mt-2 grid gap-2 rounded-xl border border-border/20 bg-muted/50 p-3">
-                {navItems.map((item) => (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    onClick={() => setMenuOpen(false)}
-                    className="rounded-lg px-3 py-2 text-sm font-semibold uppercase tracking-wide text-foreground/90 transition hover:bg-muted"
-                  >
-                    {item.name}
-                  </Link>
-                ))}
-              </div>
-            </div>
+            <AnimatePresence initial={false}>
+              {menuOpen && (
+                <motion.div
+                  id="sticky-mobile-nav"
+                  initial={{ opacity: 0, y: -8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  transition={{ duration: 0.16, ease: "easeOut" }}
+                  className="pb-3 md:hidden"
+                >
+                  <div className="mt-2 grid max-h-[calc(100dvh-4rem)] gap-2 overflow-y-auto overscroll-contain rounded-xl border border-border/20 bg-muted/50 p-3">
+                    {navItems.map((item) => (
+                      <Link
+                        key={item.href}
+                        href={item.href}
+                        onClick={() => setMenuOpen(false)}
+                        className="rounded-lg px-3 py-2 text-sm font-semibold uppercase tracking-wide text-foreground/90 transition hover:bg-muted"
+                      >
+                        {item.name}
+                      </Link>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </motion.nav>
       )}

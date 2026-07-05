@@ -8,6 +8,11 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const nextConfig = {
   output: 'standalone',
   outputFileTracingRoot: __dirname,
+  allowedDevOrigins: [
+    '127.0.0.1',
+    '100.79.236.39',
+    'mill.tail1d70bc.ts.net',
+  ],
 
   webpack: (config, { webpack }) => {
     config.plugins.push(

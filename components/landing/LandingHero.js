@@ -7,13 +7,6 @@ import Link from "next/link";
 
 import { useTheme } from "@/components/ThemeProvider";
 
-const DEFAULT_NAV_ITEMS = [
-  { id: "missions", name: "คิดต่อเรา", href: "/missions" },
-  { id: "about", name: "เกี่ยวกับเรา", href: "/about" },
-  { id: "ministries", name: "กิจกรรม", href: "/ministries" },
-  { id: "contact", name: "ติดต่อเรา", href: "/contact" },
-];
-
 const DEFAULT_CONTENT = {
   brand: "คริสตจักรชลบุรี",
   title: "ยินดีต้อนรับสู่คริสตจักรชลบุรี",
@@ -32,11 +25,9 @@ const DEFAULT_CONTENT = {
 export default function LandingHero() {
   const { colorTheme } = useTheme();
   const container = useRef();
-  const [menuOpen, setMenuOpen] = useState(false);
   const [highlights, setHighlights] = useState([]);
   const [loading, setLoading] = useState(true);
   const [content, setContent] = useState(DEFAULT_CONTENT);
-  const [navItems, setNavItems] = useState(DEFAULT_NAV_ITEMS);
   const [socialLinks, setSocialLinks] = useState({ facebook: null, youtube: null });
   const { scrollYProgress } = useScroll({
     target: container,
@@ -103,38 +94,6 @@ export default function LandingHero() {
   useEffect(() => {
     let cancelled = false;
 
-    async function loadNavigation() {
-      try {
-        const res = await fetch("/api/navigation?locale=th");
-        if (!res.ok) throw new Error("Failed to load navigation");
-        const data = await res.json();
-        if (!cancelled && Array.isArray(data.items) && data.items.length) {
-          setNavItems(
-            data.items
-              .filter((item) => item.href !== "/")
-              .map((item) => ({
-                id: item.id,
-                name: item.label ?? item.href,
-                href: item.href,
-              }))
-          );
-        }
-      } catch (error) {
-        if (!cancelled) {
-          setNavItems(DEFAULT_NAV_ITEMS);
-        }
-      }
-    }
-
-    loadNavigation();
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  useEffect(() => {
-    let cancelled = false;
-
     async function loadContactInfo() {
       try {
         const res = await fetch("/api/contact?locale=th");
@@ -161,74 +120,6 @@ export default function LandingHero() {
 
   return (
     <div className="relative min-h-screen overflow-hidden">
-      {/* Header */}
-      <header className="absolute top-0 left-0 right-0 z-20 p-6">
-        <div className="flex items-center justify-between">
-          <Link
-            href="/"
-            className="text-white text-sm sm:text-base uppercase tracking-wide font-semibold drop-shadow-md"
-          >
-            {content.brand}
-          </Link>
-          <nav className="hidden md:flex gap-8">
-            {navItems.map((item) => (
-              <Link
-                key={item.id ?? item.href}
-                href={item.href}
-                className="text-white hover:text-white/80 transition-colors duration-300 uppercase text-sm drop-shadow-md"
-              >
-                {item.name}
-              </Link>
-            ))}
-          </nav>
-          <button
-            type="button"
-            onClick={() => setMenuOpen((prev) => !prev)}
-            className="md:hidden inline-flex items-center gap-2 rounded-full border border-white/40 px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-white transition hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/60 drop-shadow-md"
-            aria-expanded={menuOpen}
-            aria-controls="hero-mobile-menu"
-          >
-            เมนู
-            <span className="relative h-3 w-4">
-              <span
-                className={`absolute inset-x-0 top-0 h-0.5 rounded-full bg-current transition ${
-                  menuOpen ? 'translate-y-1.5 rotate-45' : ''
-                }`}
-              />
-              <span
-                className={`absolute inset-x-0 top-1.5 h-0.5 rounded-full bg-current transition ${
-                  menuOpen ? 'opacity-0' : 'opacity-100'
-                }`}
-              />
-              <span
-                className={`absolute inset-x-0 top-3 h-0.5 rounded-full bg-current transition ${
-                  menuOpen ? '-translate-y-1.5 -rotate-45' : ''
-                }`}
-              />
-            </span>
-          </button>
-        </div>
-        {menuOpen && (
-          <div
-            id="hero-mobile-menu"
-            className="mt-4 rounded-2xl border border-white/20 bg-black/60 p-4 backdrop-blur-md md:hidden"
-          >
-            <div className="grid gap-2">
-              {navItems.map((item) => (
-                <Link
-                  key={item.id ?? item.href}
-                  href={item.href}
-                  onClick={() => setMenuOpen(false)}
-                  className="rounded-xl bg-white/10 px-4 py-3 text-sm font-semibold uppercase tracking-wide text-white transition hover:bg-white/20"
-                >
-                  {item.name}
-                </Link>
-              ))}
-            </div>
-          </div>
-        )}
-      </header>
-
       {/* Hero Content with Parallax */}
       <motion.div ref={container} style={{ y }} className="relative min-h-screen">
         {content.imageUrl.startsWith("/") ? (
