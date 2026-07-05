@@ -1,1 +1,73 @@
-/* Payload admin overrides — parallel to the project's own /admin */
+/* Payload admin overrides — parallel to the project's own /admin.
+   Plain, warm dark palette modeled on Claude's dark mode: near-black warm
+   grays, soft off-white text, coral accent. Theme is forced to dark in
+   payload.config.ts, so only [data-theme='dark'] needs styling. */
+
+html[data-theme='dark'] {
+  /* warm gray elevation ramp (0 = deepest bg, 1000 = brightest text) */
+  --theme-elevation-0: #1b1a18;
+  --theme-elevation-25: #201f1d;
+  --theme-elevation-50: #262624;
+  --theme-elevation-100: #2b2a27;
+  --theme-elevation-150: #31302c;
+  --theme-elevation-200: #383733;
+  --theme-elevation-250: #3e3d39;
+  --theme-elevation-300: #45443f;
+  --theme-elevation-350: #4c4b45;
+  --theme-elevation-400: #54524c;
+  --theme-elevation-450: #605e57;
+  --theme-elevation-500: #6c6a62;
+  --theme-elevation-550: #78766e;
+  --theme-elevation-600: #84817a;
+  --theme-elevation-650: #93908a;
+  --theme-elevation-700: #a3a09a;
+  --theme-elevation-750: #b1aea6;
+  --theme-elevation-800: #c5c2b8;
+  --theme-elevation-850: #d3d0c6;
+  --theme-elevation-900: #e2dfd5;
+  --theme-elevation-950: #ebe8de;
+  --theme-elevation-1000: #f2efe6;
+
+  --theme-bg: #262624;
+  --theme-input-bg: #30302e;
+  --theme-text: #f0eee6;
+  --theme-overlay: rgba(27, 26, 24, 0.75);
+
+  /* coral accent (selected states, toggles, focus) */
+  --theme-success-50: #2f221d;
+  --theme-success-100: #3d2a21;
+  --theme-success-150: #4a3227;
+  --theme-success-200: #583a2c;
+  --theme-success-250: #664232;
+  --theme-success-300: #744a37;
+  --theme-success-400: #a05c43;
+  --theme-success-500: #d97757;
+  --theme-success-550: #dd8261;
+  --theme-success-600: #e08b6d;
+  --theme-success-650: #e39579;
+  --theme-success-700: #eaa98d;
+  --theme-success-750: #eeb39b;
+  --theme-success-800: #f1c4b0;
+  --theme-success-850: #f4d0c0;
+  --theme-success-900: #f8dcd1;
+  --theme-success-950: #fae8e0;
+
+  /* softer, larger corners */
+  --style-radius-s: 6px;
+  --style-radius-m: 8px;
+  --style-radius-l: 12px;
+
+  color-scheme: dark;
+}
+
+/* calmer chrome: flatten the nav/header onto the deep background */
+html[data-theme='dark'] {
+  .nav,
+  .template-default__nav {
+    background: var(--theme-elevation-0);
+  }
+
+  .app-header {
+    background: var(--theme-bg);
+  }
+}
