@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { addPath, togglePath, deletePath } from '@/app/admin/(protected)/config/paths/actions';
+import { addPath, togglePath, deletePath } from '@/app/(site)/admin/(protected)/config/paths/actions';
 import { useRouter } from 'next/navigation';
 
 export default function PathConfigList({ paths, availablePaths = [] }) {
