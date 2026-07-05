@@ -21,6 +21,7 @@ import { PathConfigs } from './collections/PathConfigs'
 import { CategorySettings } from './collections/CategorySettings'
 import { ContactInfo } from './globals/ContactInfo'
 import { LandingPage } from './globals/LandingPage'
+import { SiteSettings } from './globals/SiteSettings'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -57,7 +58,7 @@ export default buildConfig({
     PathConfigs,
     CategorySettings,
   ],
-  globals: [ContactInfo, LandingPage],
+  globals: [ContactInfo, LandingPage, SiteSettings],
   editor: lexicalEditor(),
   localization: {
     locales: ['th', 'en'],
@@ -83,7 +84,9 @@ export default buildConfig({
     // (e.g. a bare local checkout) media falls back to local disk.
     vercelBlobStorage({
       enabled: Boolean(process.env.BLOB_READ_WRITE_TOKEN),
-      collections: { media: true },
+      // disablePayloadAccessControl -> doc.url is the absolute public CDN
+      // URL (copy-pasteable anywhere) instead of a proxied /payload-api path
+      collections: { media: { disablePayloadAccessControl: true } },
       token: process.env.BLOB_READ_WRITE_TOKEN,
     }),
   ],

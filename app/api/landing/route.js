@@ -17,6 +17,15 @@ async function getHandler(request) {
       locale,
       fallbackLocale: 'th',
     });
+    // An uploaded/selected image wins over the pasted URL; components only
+    // ever see a resolved imageUrl string.
+    for (const key of ['hero', 'featured', 'promo']) {
+      const section = landing?.[key];
+      if (section && typeof section === 'object') {
+        section.imageUrl = section.image?.url || section.imageUrl;
+        delete section.image;
+      }
+    }
     return NextResponse.json(landing, { headers: CACHE_HEADERS });
   } catch (error) {
     logError(request, error, { operation: 'fetch_landing_page' });

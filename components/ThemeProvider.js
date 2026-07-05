@@ -15,6 +15,29 @@ export function useTheme() {
 export function ThemeProvider({ children }) {
   const [colorTheme, setColorTheme] = useState('bw');
 
+  // Managed in the Payload CMS: Globals → Site Settings → Color Theme
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadTheme() {
+      try {
+        const res = await fetch('/api/site-settings');
+        if (!res.ok) return;
+        const data = await res.json();
+        if (!cancelled && (data.colorTheme === 'bw' || data.colorTheme === 'lowkey')) {
+          setColorTheme(data.colorTheme);
+        }
+      } catch {
+        // keep default
+      }
+    }
+
+    loadTheme();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   // Apply theme class to document
   useEffect(() => {
     const root = document.documentElement;

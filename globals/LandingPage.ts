@@ -19,6 +19,7 @@ export const LandingPage: GlobalConfig = {
         { name: 'description', type: 'textarea', localized: true },
         { name: 'ctaLabel', type: 'text', localized: true },
         { name: 'ctaHref', type: 'text' },
+        { name: 'image', type: 'upload', relationTo: 'media', admin: { description: 'Background image (upload/select — takes priority over the URL below)' } },
         { name: 'imageUrl', type: 'text', admin: { description: 'Background image URL (default /images/landing-hero.png)' } },
         { name: 'imageAlt', type: 'text', localized: true },
         { name: 'socialHeading', type: 'text', localized: true, admin: { description: 'Text above the Facebook/YouTube buttons' } },
@@ -38,6 +39,7 @@ export const LandingPage: GlobalConfig = {
         },
         { name: 'ctaLabel', type: 'text', localized: true },
         { name: 'ctaHref', type: 'text' },
+        { name: 'image', type: 'upload', relationTo: 'media', admin: { description: 'Side image (upload/select — takes priority over the URL below)' } },
         { name: 'imageUrl', type: 'text', admin: { description: 'Side image URL (default /images/landing-featured.png)' } },
         { name: 'imageAlt', type: 'text', localized: true },
       ],
@@ -47,6 +49,7 @@ export const LandingPage: GlobalConfig = {
       type: 'group',
       admin: { description: 'The Bible-verse section' },
       fields: [
+        { name: 'image', type: 'upload', relationTo: 'media', admin: { description: 'Background image (upload/select — takes priority over the URL below)' } },
         { name: 'imageUrl', type: 'text', admin: { description: 'Background image URL (default /images/image.png)' } },
         { name: 'imageAlt', type: 'text', localized: true },
         { name: 'badge', type: 'text', localized: true, admin: { description: 'Small pill label (default พระคัมภีร์)' } },
