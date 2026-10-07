@@ -3,7 +3,7 @@ import type { CollectionConfig } from 'payload'
 // Christmas event sign-ups (migrated from the standalone ccxmas app).
 // The form's fields are defined in the christmas-event global, so answers are
 // stored as JSON keyed by each field's `name`. Public creates go through
-// /api/christmas/register (which checks the on/off toggle); the collection
+// /api/christmas/register (which checks the `enabled` toggle); the collection
 // itself is staff-only.
 export const ChristmasRegistrations: CollectionConfig = {
   slug: 'christmas-registrations',

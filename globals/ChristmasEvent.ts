@@ -1,7 +1,7 @@
 import type { GlobalConfig } from 'payload'
 
-// Settings + copy for the /christmas page. `showForm` is the on/off switch
-// for registration; when off the page shows the closed message instead.
+// Settings + copy for the /christmas page. `enabled` is the one switch
+// (default off): off = /christmas, tickets and the registration API all 404.
 // `formFields` defines the sign-up form itself (empty = built-in defaults).
 export const ChristmasEvent: GlobalConfig = {
   slug: 'christmas-event',
@@ -12,11 +12,11 @@ export const ChristmasEvent: GlobalConfig = {
   },
   fields: [
     {
-      name: 'showForm',
-      label: 'Show registration form',
+      name: 'enabled',
+      label: 'Enable Christmas registration',
       type: 'checkbox',
       defaultValue: false,
-      admin: { description: 'On: /christmas shows the sign-up form. Off: shows the closed message.' },
+      admin: { description: 'On: /christmas shows the sign-up form. Off: the page, tickets and registration API are hidden (404).' },
     },
     { name: 'eventDate', type: 'date', admin: { date: { pickerAppearance: 'dayAndTime' }, description: 'Drives the countdown and the ticket year' } },
     {
@@ -33,8 +33,6 @@ export const ChristmasEvent: GlobalConfig = {
         { name: 'formTitle', type: 'text', localized: true, admin: { description: 'Heading above the form (default แบบฟอร์มลงทะเบียน)' } },
         { name: 'submitLabel', type: 'text', localized: true, admin: { description: 'Default ลงทะเบียนเข้าร่วมงาน' } },
         { name: 'pdpaText', type: 'textarea', localized: true, admin: { description: 'Consent checkbox text (required to submit)' } },
-        { name: 'closedTitle', type: 'text', localized: true, admin: { description: 'Default ขณะนี้ปิดรับลงทะเบียนแล้ว' } },
-        { name: 'closedMessage', type: 'textarea', localized: true },
         { name: 'ticketNote', type: 'text', localized: true, admin: { description: 'Shown on the ticket (default กรุณาแคปหน้าจอ เพื่อแสดงที่โต๊ะลงทะเบียน)' } },
       ],
     },

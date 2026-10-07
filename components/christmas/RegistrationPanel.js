@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Check, Loader2, Sparkles } from "lucide-react";
+import { Check, Loader2 } from "lucide-react";
 
 const inputCls =
   "peer w-full rounded-xl border border-white/10 bg-white/[0.04] px-4 pb-2.5 pt-6 text-[15px] text-white outline-none transition placeholder:text-transparent focus:border-[#f6c46a]/60 focus:bg-white/[0.07] focus:ring-4 focus:ring-[#f6c46a]/10";
@@ -87,17 +87,6 @@ export default function RegistrationPanel({ event, onCelebrate }) {
   const [consent, setConsent] = useState(false);
   const [state, setState] = useState("idle"); // idle | sending | done
   const [error, setError] = useState("");
-
-  if (!event.showForm) {
-    return (
-      <div className="xmas-glass xmas-rise rounded-[28px] p-8 text-center sm:p-10">
-        <Sparkles className="mx-auto h-8 w-8 text-[#f6c46a]" />
-        <h2 className="mt-4 font-[family-name:var(--font-xmas-serif)] text-2xl font-semibold text-white sm:text-3xl">{event.closedTitle}</h2>
-        <p className="mt-4 whitespace-pre-line leading-relaxed text-white/70">{event.closedMessage}</p>
-        <p className="mt-6 text-sm text-[#f6c46a]/80">ณ {event.venue}</p>
-      </div>
-    );
-  }
 
   const submit = async (e) => {
     e.preventDefault();

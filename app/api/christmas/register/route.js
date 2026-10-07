@@ -7,8 +7,8 @@ import { withLogging, logError } from '@/lib/logger';
 async function postHandler(request) {
   try {
     const event = await getChristmasEvent();
-    if (!event.showForm) {
-      return NextResponse.json({ error: 'Registration is closed' }, { status: 403 });
+    if (!event.enabled) {
+      return NextResponse.json({ error: 'Not found' }, { status: 404 });
     }
 
     const body = await request.json();

@@ -1,3 +1,4 @@
+import { notFound } from "next/navigation";
 import { getChristmasEvent } from "@/lib/christmas";
 import { generateMetadata as genMetadata } from "@/lib/seo";
 import ChristmasPage from "@/components/christmas/ChristmasPage";
@@ -15,5 +16,6 @@ export const metadata = genMetadata({
 
 export default async function Page() {
   const event = await getChristmasEvent();
+  if (!event.enabled) notFound();
   return <ChristmasPage event={event} fontClass={serifThai.variable} />;
 }
