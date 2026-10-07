@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getNavigationItems } from '@/lib/navigation';
+import { getChristmasLink } from '@/lib/christmas';
 import { withLogging, logError } from '@/lib/logger';
 
 const CACHE_HEADERS = {
@@ -11,7 +12,10 @@ async function getHandler(request) {
   const locale = searchParams.get('locale') || 'th';
 
   try {
-    const items = await getNavigationItems({ locale });
+    const [items, christmas] = await Promise.all([getNavigationItems({ locale }), getChristmasLink()]);
+    if (christmas) {
+      items.push({ id: 'christmas', href: christmas.href, label: christmas.label, order: 999, active: true });
+    }
     return NextResponse.json(
       { items },
       {

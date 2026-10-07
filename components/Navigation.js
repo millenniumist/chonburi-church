@@ -8,7 +8,7 @@ const DEFAULT_NAV_ITEMS = [
   { id: 'home', name: 'หน้าแรก', href: '/' },
   { id: 'about', name: 'เกี่ยวกับเรา', href: '/about' },
   { id: 'worship', name: 'การนมัสการ', href: '/worship' },
-  { id: 'missions', name: 'คิดต่อเรา', href: '/missions' },
+  { id: 'missions', name: 'พันธกิจ', href: '/missions' },
   { id: 'ministries', name: 'กิจกรรม', href: '/ministries' },
   { id: 'projects', name: 'โครงการ', href: '/projects' },
   { id: 'financial', name: 'การเงิน', href: '/financial' },

@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getPayloadClient } from '@/lib/payload-cms';
+import { getChristmasLink } from '@/lib/christmas';
 import { withLogging, logError } from '@/lib/logger';
 
 const CACHE_HEADERS = {
@@ -25,6 +26,13 @@ async function getHandler(request) {
         section.imageUrl = section.image?.url || section.imageUrl;
         delete section.image;
       }
+    }
+    // While Christmas registration is enabled, lead the last footer column with it.
+    const christmas = await getChristmasLink();
+    const columns = landing?.footer?.columns;
+    if (christmas && Array.isArray(columns) && columns.length) {
+      const last = columns[columns.length - 1];
+      last.links = [christmas, ...(last.links || [])];
     }
     return NextResponse.json(landing, { headers: CACHE_HEADERS });
   } catch (error) {

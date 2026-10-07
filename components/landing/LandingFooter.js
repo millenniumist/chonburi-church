@@ -17,7 +17,7 @@ const DEFAULT_FOOTER = {
       heading: "ข้อมูล",
       links: [
         { label: "การเงิน", href: "/financial" },
-        { label: "คิดต่อเรา", href: "/missions" },
+        { label: "พันธกิจ", href: "/missions" },
         { label: "การนมัสการ", href: "/worship" },
         { label: "ข่าวสาร", href: "/about" },
       ],

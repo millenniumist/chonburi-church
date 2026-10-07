@@ -23,6 +23,7 @@ export const ChristmasEvent: GlobalConfig = {
       type: 'collapsible',
       label: 'Page text',
       fields: [
+        { name: 'navLabel', type: 'text', localized: true, admin: { description: 'Menu + footer link text while enabled (default ลงทะเบียนคริสต์มาส)' } },
         { name: 'eyebrow', type: 'text', localized: true, admin: { description: 'Small label above the title (default ลงทะเบียนร่วมงาน)' } },
         { name: 'title', type: 'text', localized: true, admin: { description: 'Default คริสต์มาสแห่งความหวัง' } },
         { name: 'dateLabel', type: 'text', localized: true, admin: { description: 'e.g. 24 ธันวาคม 2026' } },
