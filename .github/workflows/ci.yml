@@ -1,0 +1,57 @@
+# CI: lint, typecheck and a full production build against a throwaway
+# Postgres (same steps as `vercel-build`: prisma migrate + payload schema push).
+# CD is Vercel's Git integration: `dev` -> dev.chonburichurch.com (preview,
+# own database, password-gated), `main` -> production. `main` requires this
+# check to pass.
+name: CI
+
+on:
+  push:
+    branches: [dev, main]
+  pull_request:
+    branches: [dev, main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: lint · typecheck · build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: ci
+          POSTGRES_PASSWORD: ci
+          POSTGRES_DB: ci
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U ci"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://ci:ci@localhost:5432/ci?schema=cc_financial
+      DATABASE_URL_UNPOOLED: postgresql://ci:ci@localhost:5432/ci?schema=cc_financial
+      PAYLOAD_DATABASE_URI: postgresql://ci:ci@localhost:5432/ci
+      PAYLOAD_SECRET: ci-only-secret
+      NEXT_TELEMETRY_DISABLED: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npx tsc --noEmit -p .
+      - name: Database schema (prisma + payload)
+        run: |
+          npx prisma generate
+          npx prisma migrate deploy
+          npx esbuild payload.config.ts --bundle --format=esm --platform=node --packages=external --outfile=payload.config.bundle.mjs
+          NODE_ENV=development node scripts/payload-push.mjs
+      - run: npm run build

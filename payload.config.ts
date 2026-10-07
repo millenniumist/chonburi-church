@@ -19,9 +19,11 @@ import { FinancialCategories } from './collections/FinancialCategories'
 import { Feedback } from './collections/Feedback'
 import { PathConfigs } from './collections/PathConfigs'
 import { CategorySettings } from './collections/CategorySettings'
+import { ChristmasRegistrations } from './collections/ChristmasRegistrations'
 import { ContactInfo } from './globals/ContactInfo'
 import { LandingPage } from './globals/LandingPage'
 import { SiteSettings } from './globals/SiteSettings'
+import { ChristmasEvent } from './globals/ChristmasEvent'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -57,8 +59,9 @@ export default buildConfig({
     Feedback,
     PathConfigs,
     CategorySettings,
+    ChristmasRegistrations,
   ],
-  globals: [ContactInfo, LandingPage, SiteSettings],
+  globals: [ContactInfo, LandingPage, SiteSettings, ChristmasEvent],
   editor: lexicalEditor(),
   localization: {
     locales: ['th', 'en'],

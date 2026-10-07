@@ -1,7 +1,25 @@
 import { NextResponse } from 'next/server';
+import { GATE_COOKIE, gateToken } from './lib/site-gate';
+
+// Paths reachable without the site password (the unlock form itself, and the
+// internal path-config fetch this middleware makes without cookies).
+const GATE_OPEN = ['/unlock', '/api/unlock', '/api/admin/config/paths', '/api/health'];
 
 export async function middleware(request) {
     const { pathname } = request.nextUrl;
+
+    const sitePassword = process.env.SITE_PASSWORD;
+    if (sitePassword && !GATE_OPEN.includes(pathname)) {
+        const cookie = request.cookies.get(GATE_COOKIE)?.value;
+        if (cookie !== (await gateToken(sitePassword))) {
+            if (pathname.startsWith('/api') || pathname.startsWith('/payload-api')) {
+                return NextResponse.json({ error: 'Locked' }, { status: 401 });
+            }
+            const url = new URL('/unlock', request.url);
+            url.searchParams.set('next', pathname + request.nextUrl.search);
+            return NextResponse.redirect(url);
+        }
+    }
 
     // Skip internal paths, static files, and admin routes (both existing /admin and the
     // parallel Payload CMS admin mounted at /payload-admin / /payload-api).
@@ -69,11 +87,12 @@ export const config = {
     matcher: [
         /*
          * Match all request paths except for the ones starting with:
-         * - api (API routes)
          * - _next/static (static files)
          * - _next/image (image optimization files)
          * - favicon.ico (favicon file)
+         * (/api is matched for the site password gate; the path-config
+         * check below still skips it.)
          */
-        '/((?!api|_next/static|_next/image|favicon.ico).*)',
+        '/((?!_next/static|_next/image|favicon.ico).*)',
     ],
 };

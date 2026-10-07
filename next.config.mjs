@@ -12,6 +12,7 @@ const nextConfig = {
     '127.0.0.1',
     '100.79.236.39',
     'mill.tail1d70bc.ts.net',
+    'mill-wsl.tail1d70bc.ts.net',
   ],
 
   webpack: (config, { webpack }) => {
