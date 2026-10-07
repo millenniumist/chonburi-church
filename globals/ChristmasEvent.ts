@@ -33,6 +33,8 @@ export const ChristmasEvent: GlobalConfig = {
         { name: 'formTitle', type: 'text', localized: true, admin: { description: 'Heading above the form (default แบบฟอร์มลงทะเบียน)' } },
         { name: 'submitLabel', type: 'text', localized: true, admin: { description: 'Default ลงทะเบียนเข้าร่วมงาน' } },
         { name: 'pdpaText', type: 'textarea', localized: true, admin: { description: 'Consent checkbox text (required to submit)' } },
+        { name: 'emailSubject', type: 'text', localized: true, admin: { description: 'Confirmation email subject (ticket ID is appended). Sent when the form has an Email field and Brevo is configured.' } },
+        { name: 'emailIntro', type: 'textarea', localized: true, admin: { description: 'Confirmation email body text' } },
         { name: 'ticketNote', type: 'text', localized: true, admin: { description: 'Shown on the ticket (default กรุณาแคปหน้าจอ เพื่อแสดงที่โต๊ะลงทะเบียน)' } },
       ],
     },

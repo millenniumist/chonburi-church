@@ -1,8 +1,10 @@
-import { NextResponse } from 'next/server';
+import { NextResponse, after } from 'next/server';
 import { randomBytes } from 'node:crypto';
 import { getPayloadClient } from '@/lib/payload-cms';
 import { getChristmasEvent, validateAnswers, displayNameFor } from '@/lib/christmas';
-import { withLogging, logError } from '@/lib/logger';
+import { sendEmail } from '@/lib/brevo';
+import { firstEmailAnswer, renderChristmasEmail } from '@/lib/christmas-email';
+import { withLogging, logError, logger } from '@/lib/logger';
 
 async function postHandler(request) {
   try {
@@ -30,6 +32,28 @@ async function postHandler(request) {
         attendance: false,
         pdpaConsent: true,
       },
+    });
+
+    // Confirmation email runs after the response so Brevo can't slow or
+    // break registration; the outcome is recorded on the registration.
+    const to = firstEmailAnswer(event.formFields, answers);
+    const ticketUrl = `${new URL(request.url).origin}/christmas/ticket/${registration.tId}`;
+    after(async () => {
+      let emailStatus = 'skipped';
+      try {
+        if (to) {
+          const mail = renderChristmasEmail({ event, registration, ticketUrl });
+          ({ status: emailStatus } = await sendEmail({
+            to: { email: to, name: registration.displayName || undefined },
+            ...mail,
+            tags: ['christmas-registration'],
+          }));
+        }
+      } catch (error) {
+        emailStatus = 'failed';
+        logger.error({ err: error.message, tId: registration.tId }, 'christmas confirmation email failed');
+      }
+      await payload.update({ collection: 'christmas-registrations', id: registration.id, data: { emailStatus } });
     });
 
     return NextResponse.json({ tId: registration.tId }, { status: 201 });

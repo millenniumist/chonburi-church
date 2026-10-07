@@ -14,7 +14,7 @@ export const ChristmasRegistrations: CollectionConfig = {
   admin: {
     useAsTitle: 'displayName',
     group: 'Christmas',
-    defaultColumns: ['tId', 'displayName', 'summary', 'attendance', 'createdAt'],
+    defaultColumns: ['tId', 'displayName', 'summary', 'attendance', 'emailStatus', 'createdAt'],
     listSearchableFields: ['displayName', 'summary', 'tId'],
     description: 'Export all as CSV: /api/christmas/export (while logged in)',
   },
@@ -33,6 +33,16 @@ export const ChristmasRegistrations: CollectionConfig = {
     { name: 'staffNotes', type: 'textarea' },
     { name: 'eventYear', type: 'number', index: true, admin: { position: 'sidebar' } },
     { name: 'attendance', type: 'checkbox', defaultValue: false, admin: { position: 'sidebar', description: 'Checked in at the door' } },
+    {
+      name: 'emailStatus',
+      type: 'select',
+      options: [
+        { label: 'Sent', value: 'sent' },
+        { label: 'Failed', value: 'failed' },
+        { label: 'Skipped (no email / Brevo off)', value: 'skipped' },
+      ],
+      admin: { position: 'sidebar', readOnly: true, description: 'Confirmation email (Brevo)' },
+    },
     { name: 'pdpaConsent', type: 'checkbox', defaultValue: false, admin: { position: 'sidebar', readOnly: true } },
   ],
 }
